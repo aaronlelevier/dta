@@ -16,10 +16,10 @@
 send_email(Subject, Message) ->
   FromEmail = os:getenv("DTA_TEST_EMAIL_USERNAME"),
   ToEmail = os:getenv("DTA_TEST_TO_EMAIL_USERNAME"),
-  gen_smtp_client:send({FromEmail, [ToEmail],
+  gen_smtp_client:send_blocking({FromEmail, [ToEmail],
     util:str_format(
       "Subject: ~s\r\nFrom: DTA Test\r\nTo: ~p\r\n\r\n~s",
-      [Subject, FromEmail, ToEmail, Message])},
+      [Subject, FromEmail, Message])},
     [
       {relay, "smtp.gmail.com"},
       {username, FromEmail},

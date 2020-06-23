@@ -5,7 +5,10 @@
   {applications,
    [kernel,
     stdlib,
-    web
+    web,
+    dta,
+    util,
+    gen_smtp
    ]},
   {env,[]},
   {modules, []},

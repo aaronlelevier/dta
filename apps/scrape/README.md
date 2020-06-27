@@ -15,20 +15,23 @@ If there's a dependency that the escript needs, it should be added in the applic
 
 ## Run
 
+Syntax is:
+
+    $ _build/default/bin/scrape <bike> <url>
+
+Meta AM 29:
+
     $ _build/default/bin/scrape MetaAm29 https://www.commencalusa.com/meta-am-29-c102x3872635
     
-## References
-    
-Build an escript example with rebar3:
-- https://www.rebar3.org/discuss/5d29172873e1ed00447cb362
+Or Clash for example:
 
-Config:
-- https://www.rebar3.org/docs/configuration#escript
+    $ _build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
 
-Commands:
-- https://www.rebar3.org/docs/commands#escriptize
+### Run with Cron
 
-## Cron workflow
+    $ * * * * * /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
+
+#### Cron workflow
 
 Edit crontab
 
@@ -38,10 +41,28 @@ Check crontab
 
     $ crontab -l
 
-Example crontab
-   
-    $ * * * * * /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape MetaAm29 https://www.commencalusa.com/meta-am-29-c102x3872635
-
 Check cronjob output
 
     $ tail /var/mail/aaron
+
+## References
+
+### Escript
+
+Build an escript example with rebar3:
+- https://www.rebar3.org/discuss/5d29172873e1ed00447cb362
+
+Config:
+- https://www.rebar3.org/docs/configuration#escript
+
+Commands:
+- https://www.rebar3.org/docs/commands#escriptize
+
+### Cron
+
+Scenic walk through cron
+- https://kvz.io/schedule-tasks-on-linux-using-crontab.html
+
+How to run for multiple days
+- https://stackoverflow.com/a/1382638/1913888
+

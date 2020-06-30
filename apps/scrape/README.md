@@ -29,7 +29,9 @@ Or Clash for example:
 
 ### Run with Cron
 
-    $ * * * * * /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
+Initially source the `env-file` so the required environment variables are present, then run escript with params
+
+    $ * * * * * source $HOME/<env-file> && /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
 
 #### Cron workflow
 

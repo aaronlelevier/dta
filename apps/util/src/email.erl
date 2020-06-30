@@ -9,6 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([send_email/2]).
+-include_lib("dta/include/macros.hrl").
 
 
 %% @doc Sends an email async
@@ -16,6 +17,10 @@
 send_email(Subject, Message) ->
   FromEmail = os:getenv("DTA_TEST_EMAIL_USERNAME"),
   ToEmail = os:getenv("DTA_TEST_TO_EMAIL_USERNAME"),
+  Pw = os:getenv("DTA_TEST_EMAIL_PW"),
+  ?LOG({from_email, FromEmail}),
+  ?LOG({to_email, ToEmail}),
+  ?LOG({pw_loaded, is_list(Pw)}),
   gen_smtp_client:send_blocking({FromEmail, [ToEmail],
     util:str_format(
       "Subject: ~s\r\nFrom: DTA Test\r\nTo: ~p\r\n\r\n~s",
@@ -23,7 +28,7 @@ send_email(Subject, Message) ->
     [
       {relay, "smtp.gmail.com"},
       {username, FromEmail},
-      {password, os:getenv("DTA_TEST_EMAIL_PW")},
+      {password, Pw},
       {auth, always},
       {ssl, true}
     ]

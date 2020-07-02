@@ -9,8 +9,11 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([fetch_page/1, html_filename/1, is_available/1, write_html_to_file/2,
-  fetch_page_and_write_to_file/1]).
+  fetch_page_and_write_to_file/1, read_file/1]).
 -include_lib("dta/include/macros.hrl").
+
+%% DEBUG
+-compile(export_all).
 
 
 %% @doc fetch a HTML page and caches it to the "priv/html" dir
@@ -37,6 +40,12 @@ write_html_to_file(Url, Body) ->
   file:write_file(web:html_filename(Url), Body).
 
 
+-spec read_file(Url::string) -> {ok, binary()}.
+read_file(Url) ->
+  File = web:html_filename(Url),
+  file:read_file(File).
+
+
 %% @doc returns the abspath based on the "Url"
 -spec html_filename(Url :: string()) -> string().
 html_filename(Url) ->
@@ -58,3 +67,18 @@ is_available_using_contents(Bin) ->
     {match, _} -> false; % product not posted yet
     nomatch -> true
   end.
+
+
+findall(Path, Tree) ->
+  L1 =findall(Tree, lists:reverse(Path), [], []),
+  lists:reverse(L1).
+
+findall({Tag,A,C}, [Tag|Path], Path, L) ->
+  [{A,C}|L];
+findall({Tag,_,C}, Want, Path, L) ->
+  findall(C, Want, [Tag|Path], L);
+findall([H|T], Want, Path, L) ->
+  L1 = findall(H, Want, Path, L),
+  findall(T, Want, Path, L1);
+findall(_,_,_,L) ->
+  L.

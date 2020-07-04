@@ -28,7 +28,7 @@ fetch_page(Url) ->
 
 
 %% @doc if you want to fetch the HTML contents and write them to a file
--spec fetch_page_and_write_to_file(Url::string()) -> ok.
+-spec fetch_page_and_write_to_file(Url :: string()) -> ok.
 fetch_page_and_write_to_file(Url) ->
   {ok, Body} = fetch_page(Url),
   ok = write_html_to_file(Url, Body),
@@ -40,18 +40,31 @@ write_html_to_file(Url, Body) ->
   file:write_file(web:html_filename(Url), Body).
 
 
--spec read_file(Url::string) -> {ok, binary()}.
+-spec read_file(Url :: string) -> {ok, binary()}.
 read_file(Url) ->
   File = web:html_filename(Url),
   file:read_file(File).
 
 
-%% @doc returns the abspath based on the "Url"
+%% @doc returns the abspath of the filename based on the Url
 -spec html_filename(Url :: string()) -> string().
 html_filename(Url) ->
+  Page = page_name(Url),
   PrivDir = code:priv_dir(?MODULE),
-  [_ | [Page | _]] = string:split(Url, "/", trailing),
   filename:join([PrivDir, "html", string:concat(Page, ".html")]).
+
+
+%% @doc Returns the Url page name
+-spec page_name(Url :: string()) -> string().
+page_name(Url) ->
+  [_ | [Page | _]] = string:split(Url, "/", trailing),
+  Page.
+
+
+%% @doc Returns the page name with the html suffix
+-spec html_page_name(Str :: string()) -> string().
+html_page_name(Str) ->
+  string:concat(Str, ".html").
 
 
 %% @doc returns a boolean if the product is available
@@ -70,15 +83,15 @@ is_available_using_contents(Bin) ->
 
 
 findall(Path, Tree) ->
-  L1 =findall(Tree, lists:reverse(Path), [], []),
+  L1 = findall(Tree, lists:reverse(Path), [], []),
   lists:reverse(L1).
 
-findall({Tag,A,C}, [Tag|Path], Path, L) ->
-  [{A,C}|L];
-findall({Tag,_,C}, Want, Path, L) ->
-  findall(C, Want, [Tag|Path], L);
-findall([H|T], Want, Path, L) ->
+findall({Tag, A, C}, [Tag | Path], Path, L) ->
+  [{A, C} | L];
+findall({Tag, _, C}, Want, Path, L) ->
+  findall(C, Want, [Tag | Path], L);
+findall([H | T], Want, Path, L) ->
   L1 = findall(H, Want, Path, L),
   findall(T, Want, Path, L1);
-findall(_,_,_,L) ->
+findall(_, _, _, L) ->
   L.

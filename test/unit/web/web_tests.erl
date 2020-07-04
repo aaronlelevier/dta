@@ -9,6 +9,7 @@
 -author("Aaron Lelevier").
 -include_lib("eunit/include/eunit.hrl").
 
+
 html_filename_test() ->
   Url = "https://www.commencalusa.com/meta-am-29-c102x3872635",
 
@@ -18,3 +19,14 @@ html_filename_test() ->
     filename:join(code:priv_dir(web), "html/meta-am-29-c102x3872635.html"),
     Ret).
 
+
+page_name_test() ->
+  Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
+  ?assertEqual(
+    "stylus-2020",
+    web:page_name(Url)
+  ).
+
+
+html_page_name_test() ->
+  ?assertEqual("stylus-2020.html", web:html_page_name("stylus-2020")).

@@ -14,6 +14,18 @@
 -compile(export_all).
 
 
+%% NEXT: destructure the map
+%% TODO: hardcoded
+%% @doc Returns the Product JSON as an Erlang map
+%% NOTE: HTML file must already be cached
+-spec product_map() -> map().
+product_map() ->
+  Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
+  Tree = html_tree(Url),
+  Bin = raw_json_data(Tree),
+  jsx:decode(Bin).
+
+
 %% @doc destructure the HTML Tree to the JSON binary contents that we care about
 -spec raw_json_data(Tree :: tuple()) -> binary().
 raw_json_data(Tree) ->
@@ -33,15 +45,6 @@ html_tree(Url) ->
   Tree.
 
 
-%% NEXT: destructure the map
-%% @doc Returns the Product JSON as an Erlang map
--spec product_map() -> map().
-product_map() ->
-  Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
-  Tree = html_tree(Url),
-  Bin = raw_json_data(Tree),
-  jsx:decode(Bin).
-
 %% Read / Write contents to file %%
 
 %% @doc if you want to fetch the HTML contents and write them to a file
@@ -60,22 +63,21 @@ write_html_to_file(Url, Body) ->
   file:write_file(File, Body).
 
 
+%% @doc reads the latest file written per the Url
 -spec read_file(Url :: string()) -> {ok, binary()}.
 read_file(Url) ->
-  File = html_filename(Url),
-  file:read_file(File).
+  read_file(Url, latest).
 
-%% @doc read file based on a Dt timestamp
+
+%% @doc read latest file per Url or based on a timestamp
 -spec read_file(Url, Search) -> {ok, binary()} when
   Url :: string(),
   Search :: {latest | string()}.
-
 read_file(Url, latest) ->
   {ok, L} = file:list_dir(bike_html_dir(Url)),
   L2 = lists:sort(fun(X, Y) -> X > Y end, L),
   [Dt|_] = L2,
   file:read_file(filename:join(bike_html_dir(Url), Dt));
-
 read_file(Url, Dt) ->
   File = html_filename(Url, Dt),
   file:read_file(File).

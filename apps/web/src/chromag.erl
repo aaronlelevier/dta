@@ -9,19 +9,33 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([]).
+-include_lib("dta/include/macros.hrl").
+
 
 %% DEBUG
 -compile(export_all).
+
+%% TESTING
+stylus_url() -> "https://chromagbikes.com/collections/27-5-26/products/stylus-2020".
+
+
+main(Url) ->
+  {ok, ?MODULE} = db_start(),
+  % need to fetch and save to a file because all HTML manipulation uses File I/O
+  fetch_page_and_write_to_file(Url),
+  Inventory = inventory(Url),
+  Dt = dateutil:now_timestamp_str(),
+  ok = db_insert_all(Inventory, Dt),
+  ok = db_stop().
 
 
 %% NEXT: destructure the map
 %% TODO: hardcoded
 %% @doc Returns the Product JSON as an Erlang map
 %% NOTE: HTML file must already be cached
--spec product_map() -> map().
-product_map() ->
+-spec product_map(Url :: string()) -> map().
+product_map(Url) ->
   % reads the latest version of thi Url
-  Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
   Tree = html_tree(Url),
   Bin = raw_json_data(Tree),
   jsx:decode(Bin).
@@ -47,18 +61,18 @@ raw_json_data(Tree) ->
 %% Construct the inventory
 
 %% @doc returns a list of Product variants
--spec variants() -> [map()].
-variants() ->
-  Map = product_map(),
+-spec variants(Url :: string()) -> [map()].
+variants(Url) ->
+  Map = product_map(Url),
   Product = maps:get(<<"product">>, Map),
   maps:get(<<"variants">>, Product).
 
 
 %% @doc Returns product map with inventory counts
--spec inventory() -> map().
-inventory() ->
-  Map = product_map(),
-  Variants = variants(),
+-spec inventory(Url :: string()) -> map().
+inventory(Url) ->
+  Map = product_map(Url),
+  Variants = variants(Url),
   Inventories = maps:get(<<"inventories">>, Map),
   inventory(Variants, Inventories, []).
 
@@ -82,6 +96,7 @@ inventory_entry(InvenItem, Dt) ->
   {Id, Dt, Title, Quantity}.
 
 
+%% TODO: Table doesn't contain the Bike name!!
 db_start() ->
   dets:open_file(?MODULE, [{file, "chromag-prod.dets"}, {type, bag}]).
 
@@ -91,11 +106,32 @@ db_stop() ->
 
 
 %% @doc Inserts all items for a given Datetime(Dt) into the DETS table
-%% takes the `chromag:inventory()`
+%% takes the `chromag:inventory(Url)`
 db_insert_all([], _Dt) -> ok;
 db_insert_all([InvenItem | T], Dt) ->
   ok = dets:insert(?MODULE, inventory_entry(InvenItem, Dt)),
   db_insert_all(T, Dt).
+
+
+db_log_changed_inventories() ->
+  Id = dets:first(?MODULE),
+  ok = db_log_changed_inventories(Id).
+
+%% TODO: instead should check if something came back in stock
+db_log_changed_inventories('$end_of_table') -> ok;
+db_log_changed_inventories(Id) ->
+  Entries = dets:lookup(chromag, Id),
+  if length(Entries) =:= 2 ->
+    [H, H2 | _] = Entries,
+    if element(4, H) =/= element(4, H2) ->
+      ?LOG({inventory_change, Id});
+      true ->
+        ?LOG({no_change, Id})
+    end;
+    true -> ?LOG({entry_count, length(Entries), Entries})
+  end,
+  Next = dets:next(?MODULE, Id),
+  db_log_changed_inventories(Next).
 
 
 %% Read / Write contents to file %%

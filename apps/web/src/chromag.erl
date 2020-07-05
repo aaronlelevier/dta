@@ -20,10 +20,18 @@
 %% NOTE: HTML file must already be cached
 -spec product_map() -> map().
 product_map() ->
+  % reads the latest version of thi Url
   Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
   Tree = html_tree(Url),
   Bin = raw_json_data(Tree),
   jsx:decode(Bin).
+
+
+%% @doc load HTML tree from a local file based on the Url
+-spec html_tree(Url :: string()) -> tuple().
+html_tree(Url) ->
+  {ok, Bin} = read_file(Url),
+  mochiweb_html:parse(Bin).
 
 
 %% @doc destructure the HTML Tree to the JSON binary contents that we care about
@@ -36,13 +44,58 @@ raw_json_data(Tree) ->
   [Bin | _] = B2,
   Bin.
 
+%% Construct the inventory
 
-%% @doc load HTML tree from a local file based on the Url
--spec html_tree(Url :: string()) -> tuple().
-html_tree(Url) ->
-  {ok, Bin} = web:read_file(Url),
-  Tree = mochiweb_html:parse(Bin),
-  Tree.
+%% @doc returns a list of Product variants
+-spec variants() -> [map()].
+variants() ->
+  Map = product_map(),
+  Product = maps:get(<<"product">>, Map),
+  maps:get(<<"variants">>, Product).
+
+
+%% @doc Returns product map with inventory counts
+-spec inventory() -> map().
+inventory() ->
+  Map = product_map(),
+  Variants = variants(),
+  Inventories = maps:get(<<"inventories">>, Map),
+  inventory(Variants, Inventories, []).
+
+
+inventory([], _Inventories, Acc) -> Acc;
+inventory([H | T], Inventories, Acc) ->
+  Id = maps:get(<<"id">>, H),
+  InvenDetailMap = maps:get(integer_to_binary(Id), Inventories),
+  InvenQuantity = maps:get(<<"inventory_quantity">>, InvenDetailMap),
+  inventory(T, Inventories, [H#{<<"inventory_quantity">> => InvenQuantity} | Acc]).
+
+
+%% Populate DETS table
+
+%% @doc a single inventory item to populate the DETS table with
+-spec inventory_entry(InvenItem :: map(), Dt :: string()) -> {Key :: binary(), Value :: map()}.
+inventory_entry(InvenItem, Dt) ->
+  Id = maps:get(<<"id">>, InvenItem),
+  Title = maps:get(<<"title">>, InvenItem),
+  Quantity = maps:get(<<"inventory_quantity">>, InvenItem),
+  {Id, Dt, Title, Quantity}.
+
+
+db_start() ->
+  dets:open_file(?MODULE, [{file, "chromag-prod.dets"}, {type, bag}]).
+
+
+db_stop() ->
+  dets:close(?MODULE).
+
+
+%% @doc Inserts all items for a given Datetime(Dt) into the DETS table
+%% takes the `chromag:inventory()`
+db_insert_all([], _Dt) -> ok;
+db_insert_all([InvenItem | T], Dt) ->
+  ok = dets:insert(?MODULE, inventory_entry(InvenItem, Dt)),
+  db_insert_all(T, Dt).
 
 
 %% Read / Write contents to file %%
@@ -76,7 +129,7 @@ read_file(Url) ->
 read_file(Url, latest) ->
   {ok, L} = file:list_dir(bike_html_dir(Url)),
   L2 = lists:sort(fun(X, Y) -> X > Y end, L),
-  [Dt|_] = L2,
+  [Dt | _] = L2,
   file:read_file(filename:join(bike_html_dir(Url), Dt));
 read_file(Url, Dt) ->
   File = html_filename(Url, Dt),

@@ -10,13 +10,27 @@
 -vsn(1.0).
 -export([]).
 -include_lib("dta/include/macros.hrl").
-
+-include_lib("web/include/records.hrl").
 
 %% DEBUG
 -compile(export_all).
 
 %% TESTING
 stylus_url() -> "https://chromagbikes.com/collections/27-5-26/products/stylus-2020".
+
+%% #request{} constructors
+-spec create_request(web_request:url()) -> #request{}.
+create_request(Url) -> #request{url = Url, dt = dateutil:now_timestamp_str()}.
+
+-spec create_request(web_request:url(), web_request:dt()) -> #request{}.
+create_request(Url, Dt) -> #request{url = Url, dt = Dt}.
+
+
+%% web_request impl interface: start
+filename(Req) ->
+  html_filename(Req#request.url, Req#request.dt).
+
+%% web_request impl interface: stop
 
 
 main(Url) ->

@@ -11,9 +11,22 @@
 -export([fetch_page/1, html_filename/1, is_available/1, write_html_to_file/2,
   fetch_page_and_write_to_file/1, read_file/1]).
 -include_lib("dta/include/macros.hrl").
+-include_lib("web/include/records.hrl").
+-behavior(web_request).
 
 %% DEBUG
 -compile(export_all).
+
+
+-spec create_request(web_request:url()) -> #request{}.
+create_request(Url) -> #request{url = Url}.
+
+%% web_request impl interface: start
+
+filename(Req) ->
+  html_filename(Req#request.url).
+
+%% web_request impl interface: stop
 
 
 %% @doc fetch a HTML page and caches it to the "priv/html" dir
@@ -37,12 +50,12 @@ fetch_page_and_write_to_file(Url) ->
 
 -spec write_html_to_file(string(), binary()) -> ok.
 write_html_to_file(Url, Body) ->
-  file:write_file(web:html_filename(Url), Body).
+  file:write_file(html_filename(Url), Body).
 
 
 -spec read_file(Url :: string) -> {ok, binary()}.
 read_file(Url) ->
-  File = web:html_filename(Url),
+  File = html_filename(Url),
   file:read_file(File).
 
 

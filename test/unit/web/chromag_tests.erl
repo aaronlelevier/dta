@@ -53,3 +53,13 @@ bike_html_dir_test() ->
   ?assertEqual(
     filename:join(code:priv_dir(web), "html/stylus-2020"),
     Ret).
+
+
+meck_test() ->
+  ok = meck:new(dog, [non_strict]),
+  Bark = "Woof!",
+
+  meck:expect(dog, bark, fun() -> Bark end),
+
+  ?assertEqual(Bark, dog:bark()),
+  ?assertEqual(true, meck:validate(dog)).

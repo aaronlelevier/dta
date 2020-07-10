@@ -10,7 +10,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 
-can_crate_a_request_and_generate_a_filename_test() ->
+filename_generated_from_request_test() ->
   Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
   Dt = "2020-07-04:0800",
   Request = chromag:create_request(Url, Dt),
@@ -19,6 +19,18 @@ can_crate_a_request_and_generate_a_filename_test() ->
 
   ?assertEqual(
     filename:join(code:priv_dir(web), "html/stylus-2020/2020-07-04:0800.html"),
+    Ret).
+
+
+dirname_test() ->
+  Url = "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
+  Dt = "2020-07-04:0800",
+  Request = chromag:create_request(Url, Dt),
+
+  Ret = chromag:dirname(Request),
+
+  ?assertEqual(
+    filename:join(code:priv_dir(web), "html/stylus-2020"),
     Ret).
 
 

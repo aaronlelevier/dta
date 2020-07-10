@@ -10,7 +10,7 @@
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
 
--export([read_file/2]).
+-export([]).
 -export_type([url/0, dt/0]).
 
 %% Types
@@ -22,8 +22,10 @@
 %% Behaviors
 -callback filename(#request{}) -> string().
 
-%% Public API
+-callback dirname(#request{}) -> string().
 
--spec read_file(#request{}, function()) -> {ok, binary()} | {error, Reason} when
+-callback file_read(#request{}) -> {ok, binary()} | {error, Reason} when
   Reason :: string().
-read_file(Req, Fun) -> file:read_file(Fun(Req)).
+
+-callback file_write(#request{}, binary()) -> {ok, binary()} | {error, Reason} when
+  Reason :: string().

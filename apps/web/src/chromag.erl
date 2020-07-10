@@ -6,6 +6,7 @@
 %%% Created : 02. Jul 2020 7:40 AM
 %%%-------------------------------------------------------------------
 -module(chromag).
+-behavior(web_request).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([]).
@@ -27,8 +28,19 @@ create_request(Url, Dt) -> #request{url = Url, dt = Dt}.
 
 
 %% web_request impl interface: start
-filename(Req) ->
-  html_filename(Req#request.url, Req#request.dt).
+filename(Req = #request{}) ->
+  filename:join(dirname(Req), string:concat(Req#request.dt, ".html")).
+
+dirname(Req = #request{}) ->
+  Page = web:page_name(Req#request.url),
+  PrivDir = code:priv_dir(web),
+  filename:join([PrivDir, "html", Page]).
+
+file_read(_) ->
+  erlang:error(not_implemented).
+
+file_write(_, _) ->
+  erlang:error(not_implemented).
 
 %% web_request impl interface: stop
 

@@ -26,6 +26,15 @@ create_request(Url) -> #request{url = Url}.
 filename(Req) ->
   html_filename(Req#request.url).
 
+dirname(_) ->
+  erlang:error(not_implemented).
+
+file_read(_) ->
+  erlang:error(not_implemented).
+
+file_write(_, _) ->
+  erlang:error(not_implemented).
+
 %% web_request impl interface: stop
 
 

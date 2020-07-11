@@ -8,21 +8,16 @@
 -module(web_url).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([]).
--compile(export_all).
-
-
-%% Types
--type url() :: string().
+-export([brand/1, bike/1]).
 
 
 %% Public
--spec brand(url()) -> string().
+-spec brand(web_request:url()) -> string().
 brand(Url) ->
   regex_url(Url, <<"https://([a-zA-z0-9]+)">>).
 
 
--spec bike(url()) -> string().
+-spec bike(web_request:url()) -> string().
 bike(Url) ->
   regex_url(Url, <<"/([a-zA-z0-9\-]+?)$">>).
 

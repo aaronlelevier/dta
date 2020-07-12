@@ -1,6 +1,6 @@
 %%%-------------------------------------------------------------------
 %%% @author Aaron Lelevier
-%%% @doc
+%%% @doc "request" record type call back module
 %%%
 %%% @end
 %%% Created : 07. Jul 2020 7:06 AM
@@ -9,8 +9,6 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
-
--export([]).
 -export_type([url/0, dt/0]).
 
 %% Types
@@ -24,8 +22,8 @@
 
 -callback dirname(#request{}) -> string().
 
--callback file_read(#request{}) -> {ok, binary()} | {error, Reason} when
+-callback file_read(#request{}) -> {ok, iodata()} | {error, Reason} when
   Reason :: string().
 
--callback file_write(#request{}, binary()) -> {ok, binary()} | {error, Reason} when
+-callback file_write(#request{}, iodata()) -> ok | {error, Reason} when
   Reason :: string().

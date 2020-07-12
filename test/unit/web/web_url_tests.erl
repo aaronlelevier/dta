@@ -13,9 +13,6 @@
 raaw_url() ->
   "https://raawmtb.com/collections/frames-bikes/products/madonna-fox-factory-build".
 
-raaw_url2() ->
-  "https://raawmtb.com/collections/frames-bikes/products/madonna-v2-frame-kit".
-
 chromag_url() ->
   "https://chromagbikes.com/collections/27-5-26/products/stylus-2020".
 

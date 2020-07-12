@@ -14,6 +14,9 @@
 %% @doc Creates a directory, if it exists already, that's a success
 -spec make_dir(Dir::string()) -> ok | {error, string()}.
 make_dir(Dir) ->
+  % create or confirm the parent Dir exists (works recursively)
+  ok = filelib:ensure_dir(Dir),
+  % create or confirm Dir exists
   case file:make_dir(Dir) of
     ok -> ok;
     {error, eexist} -> ok;

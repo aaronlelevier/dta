@@ -213,7 +213,7 @@ html_filename(Url, Dt) ->
 -spec maybe_create_bike_html_dir(Url :: string()) -> ok.
 maybe_create_bike_html_dir(Url) ->
   Dir = bike_html_dir(Url),
-  ok = fileutil:maybe_make_dir(Dir),
+  ok = fileutil:make_dir(Dir),
   ok.
 
 

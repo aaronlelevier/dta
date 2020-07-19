@@ -24,11 +24,13 @@ now_timestamp_str(Yr, Mo, Day, Hr) ->
   io_lib:format('~b-~2..0b-~2..0b:~2..0b00', [Yr, Mo, Day, Hr]).
 
 
+%% @doc Returns date string in format: "2020-07-04"
 -spec date_str() -> string().
 date_str() ->
   {{Yr, Mo, Day}, {_Hr, _Min, _Sec}} = calendar:local_time(),
   date_str(Yr, Mo, Day).
 
 
+%% @doc Use to construct the timestamp from explicit arguments
 date_str(Yr, Mo, Day) ->
   io_lib:format('~b-~2..0b-~2..0b', [Yr, Mo, Day]).

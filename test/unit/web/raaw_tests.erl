@@ -12,7 +12,7 @@
 
 req() ->
   raaw:create_request(
-    raaw_urls:madonna_v2_frame_kit(), dateutil:date_str(2020, 6, 11)).
+    raaw_urls:madonna_v2_frame_kit(), [{dt, dateutil:date_str(2020, 6, 11)}]).
 
 %% Tests
 filename_test() ->

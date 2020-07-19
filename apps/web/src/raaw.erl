@@ -32,19 +32,24 @@ fetch_and_save(Url) ->
 
 -spec create_request(web_request:url()) -> #request{}.
 create_request(Url) ->
-  create_request(Url, dateutil:date_str()).
+  create_request(Url, [{dt, dateutil:date_str()}]).
 
 %% Use to create request for use a specific Dt(datetime) string
--spec create_request(web_request:url(), string()) -> #request{}.
-create_request(Url, Dt) ->
+-spec create_request(web_request:url(), Opts) -> #request{} when
+  Opts :: [{dt, string()} | {product_info_location, list()}].
+create_request(Url, Opts) ->
   #request{
     url = Url,
-    dt = Dt,
+    dt = proplists:get_value(dt, Opts, dateutil:date_str()),
     % computed properties
     brand = web_url:brand(Url),
     bike = web_url:bike(Url),
     % defaults
-    product_info_location = [<<"html">>, <<"body">>, <<"div">>, <<"div">>, <<"script">>]
+    product_info_location = proplists:get_value(
+      product_info_location,
+      Opts,
+      [<<"html">>, <<"body">>, <<"div">>, <<"div">>, <<"script">>]
+    )
   }.
 
 %% file funcs

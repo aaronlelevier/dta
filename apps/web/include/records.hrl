@@ -4,5 +4,6 @@
   url :: web_request:url(),
   dt,
   brand,
-  bike
+  bike,
+  product_info_location
 }).

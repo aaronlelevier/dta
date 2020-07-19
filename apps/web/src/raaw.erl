@@ -40,8 +40,11 @@ create_request(Url, Dt) ->
   #request{
     url = Url,
     dt = Dt,
+    % computed properties
     brand = web_url:brand(Url),
-    bike = web_url:bike(Url)
+    bike = web_url:bike(Url),
+    % defaults
+    product_info_location = [<<"html">>, <<"body">>, <<"div">>, <<"div">>, <<"script">>]
   }.
 
 %% file funcs
@@ -86,6 +89,6 @@ file_read(Req = #request{}) ->
 product_map(Req = #request{}) ->
   {ok, Bin} = file_read(Req),
   Tree = mochiweb_html:parse(Bin),
-  L = web:findall([<<"html">>, <<"body">>, <<"div">>, <<"div">>, <<"script">>], Tree),
+  L = web:findall(Req#request.product_info_location, Tree),
   Bin2 = web_html:extract_content(L),
   jsx:decode(Bin2).

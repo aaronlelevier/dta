@@ -11,7 +11,8 @@
 -vsn(1.0).
 -export([
   create_request/1, create_request/2, filename/1, filename/2,
-  dirname/1, file_read/1, file_write/2, product_map/1, fetch_and_save/1]).
+  dirname/1, file_read/1, file_write/2, product_map/1, fetch_and_save/1,
+  product_map_target/0]).
 -include_lib("web/include/records.hrl").
 
 
@@ -97,3 +98,6 @@ product_map(Req = #request{}) ->
   L = web:findall(Req#request.product_info_location, Tree),
   Bin2 = web_html:extract_content(L),
   jsx:decode(Bin2).
+
+%% @doc The target tag for the product map
+product_map_target() -> {<<"id">>,<<"ProductJson-1">>}.

@@ -104,6 +104,7 @@ is_available_using_contents(Bin) ->
   end.
 
 
+%% credit: [jaerlang2](https://pragprog.com/titles/jaerlang2/#resources)
 findall(Path, Tree) ->
   L1 = findall(Tree, lists:reverse(Path), [], []),
   lists:reverse(L1).
@@ -116,4 +117,20 @@ findall([H | T], Want, Path, L) ->
   L1 = findall(H, Want, Path, L),
   findall(T, Want, Path, L1);
 findall(_, _, _, L) ->
+  L.
+
+
+%% @doc Find a single HTML DOM Element's contents
+findsingle(Tree, Target) ->
+  findsingle(Tree, Target, []).
+
+findsingle({_A, B, C}, Target, L) ->
+  case lists:member(Target, B) of
+    true -> C;
+    false -> findsingle(C, Target, L)
+  end;
+findsingle([H | T], Target, L) ->
+  L1 = findsingle(H, Target, L),
+  findsingle(T, Target, L1);
+findsingle(_, _, L) ->
   L.

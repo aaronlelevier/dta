@@ -8,7 +8,7 @@
 -module(chromag2).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([fetch_and_save/1]).
+-export([fetch_and_save/1, product_map_target/0]).
 
 
 -spec fetch_and_save(web_request:url()) -> ok.
@@ -25,3 +25,7 @@ fetch_and_save(Url) ->
     raaw:filename(Req, [{extension, "json"}]),
     jsx:encode(Map, [{space, 1}, {indent, 2}])),
   ok.
+
+%% @doc The target tag for the product map
+%% if a tag is a key only, it's value is the same as it's key in 'mochiweb_html'
+product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.

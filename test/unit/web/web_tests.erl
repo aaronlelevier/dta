@@ -9,6 +9,16 @@
 -author("Aaron Lelevier").
 -include_lib("eunit/include/eunit.hrl").
 
+create_request_test() ->
+  Url = raaw_urls:madonna_v2_frame_kit(),
+
+  Req = web:create_request(Url, [{dt, dateutil:date_str(2020, 7, 19)}]),
+
+  ?assertEqual(
+    {request, Url,
+      "2020-07-19", "raawmtb", "madonna-v2-frame-kit",
+      undefined, undefined},
+    Req).
 
 can_crate_a_request_and_generate_a_filename_test() ->
   Url = "https://www.commencalusa.com/meta-am-29-c102x3872635",

@@ -16,6 +16,9 @@
 -include_lib("web/include/records.hrl").
 
 
+%% @doc The target tag for the product map
+product_map_target() -> {<<"id">>,<<"ProductJson-1">>}.
+
 -spec fetch_and_save(web_request:url()) -> ok.
 fetch_and_save(Url) ->
   {ok, Body} = web:fetch_page(Url),
@@ -39,19 +42,8 @@ create_request(Url) ->
 -spec create_request(web_request:url(), Opts) -> #request{} when
   Opts :: [{dt, string()} | {product_info_location, list()}].
 create_request(Url, Opts) ->
-  #request{
-    url = Url,
-    dt = proplists:get_value(dt, Opts, dateutil:date_str()),
-    % computed properties
-    brand = web_url:brand(Url),
-    bike = web_url:bike(Url),
-    % defaults
-    product_info_location = proplists:get_value(
-      product_info_location,
-      Opts,
-      [<<"html">>, <<"body">>, <<"div">>, <<"div">>, <<"script">>]
-    )
-  }.
+  web:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
+
 
 %% file funcs
 
@@ -95,9 +87,5 @@ file_read(Req = #request{}) ->
 product_map(Req = #request{}) ->
   {ok, Bin} = file_read(Req),
   Tree = mochiweb_html:parse(Bin),
-  L = web:findall(Req#request.product_info_location, Tree),
-  Bin2 = web_html:extract_content(L),
+  [Bin2|_] = web_html:findsingle(Tree, Req#request.product_map_target),
   jsx:decode(Bin2).
-
-%% @doc The target tag for the product map
-product_map_target() -> {<<"id">>,<<"ProductJson-1">>}.

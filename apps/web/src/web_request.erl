@@ -14,7 +14,7 @@
 %% Types
 -type url() :: string().
 
-%% datetime string of format: 2020-07-04:0900 i.e. YYYY-MM-DD:hhmm
+%% datetime string of format: "2020-07-04" i.e. "YYYY-MM-DD"
 -type dt() :: string().
 
 %% Behaviors

@@ -50,7 +50,9 @@ dirname_test() ->
 product_map_test() ->
   Url = raaw_urls:madonna_v2_frame_kit(),
   Req = raaw:create_request(Url, dateutil:date_str(2020, 7, 19)),
+
   Map = raaw:product_map(Req),
+
   ?assertEqual(true, is_map(Map)),
   ?assert(maps:size(Map) > 0).
 

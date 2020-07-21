@@ -40,7 +40,8 @@ file_write(_, _) ->
 
 %% @doc fetch a HTML page and caches it to the "priv/html" dir
 %% returns binary() of page contents
--spec fetch_page(Url :: string()) -> {ok, binary()}.
+-spec fetch_page(Url :: string()) -> {ok, Bytes} when
+  Bytes :: [byte()].
 fetch_page(Url) ->
   % fetch page
   ?LOG({url, Url}),

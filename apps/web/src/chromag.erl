@@ -8,19 +8,42 @@
 -module(chromag).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([]).
+-export([fetch_and_save/1, product_map_target/0, create_request/1, create_request/2]).
 -include_lib("dta/include/macros.hrl").
 -include_lib("web/include/records.hrl").
 
+
 %% DEBUG
 -compile(export_all).
+
+
+%% @doc fetches web page and saves html of whole page and json of product map
+-spec fetch_and_save(web_request:url()) -> ok.
+fetch_and_save(Url) ->
+  web:fetch_and_save(create_request(Url)).
+
+%% @doc The target tag for the product map
+product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.
+
+%% @doc Creates a "chromag" request where the date(dt) is defaulted to today
+-spec create_request(web_request:url()) -> #request{}.
+create_request(Url) ->
+  create_request(Url, [{dt, dateutil:date_str()}]).
+
+%% @doc Use to create request for use a specific date(dt) string
+-spec create_request(web_request:url(), Opts) -> #request{} when
+  Opts :: [{dt, string()} | {product_map_target, list()}].
+create_request(Url, Opts) ->
+  web_request:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
+
+
 
 %% Construct the inventory
 
 %% @doc returns a list of Product variants
 -spec variants(Url :: string()) -> [map()].
 variants(Url) ->
-  Req = chromag2:create_request(Url),
+  Req = create_request(Url),
   Map = web_file:product_map(Req),
   Product = maps:get(<<"product">>, Map),
   maps:get(<<"variants">>, Product).
@@ -29,7 +52,7 @@ variants(Url) ->
 %% @doc Returns product map with inventory counts
 -spec inventory(Url :: string()) -> map().
 inventory(Url) ->
-  Req = chromag2:create_request(Url),
+  Req = create_request(Url),
   Map = web_file:product_map(Req),
   Variants = variants(Url),
   Inventories = maps:get(<<"inventories">>, Map),

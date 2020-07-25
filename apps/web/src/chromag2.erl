@@ -14,34 +14,26 @@
 
 -spec fetch_and_save(web_request:url()) -> ok.
 fetch_and_save(Url) ->
-  {ok, Body} = web:fetch_page(Url),
-  %%  Req = raaw:create_request(
-  %%    Url, [{product_info_location, [<<"html">>, <<"body">>, <<"div">>, <<"main">>, <<"div">>, <<"section">>,
-  %%      <<"div">>, <<"div">>, <<"div">>, <<"div">>, <<"script">>]}]),
+  % this needs to be bike specific
   Req = create_request(Url),
-
-  % save raw file
-  ok = raaw:file_write(Req, Body),
-  % QUESTION: could save the product JSON per day or convert later?
-  Map = raaw:product_map(Req),
-
-  %% TODO: could be a helper function
-  ok = file:write_file(
-    raaw:filename(Req, [{extension, "json"}]),
-    jsx:encode(Map, [{space, 1}, {indent, 2}])),
+  % impl by "web_file" and dynamic per the "Req" value
+  {ok, Body} = web:fetch_page(Req#request.url),
+  ok = web_file:file_write(Req, Body),
+  Map = web_file:product_map(Req),
+  ok = web_file:file_write_product_map(Req, Map),
   ok.
 
+%% @doc The target tag for the product map
+product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.
+
+%% @doc Creates a "chromag" request where the date(dt) is defaulted to today
 -spec create_request(web_request:url()) -> #request{}.
 create_request(Url) ->
   create_request(Url, [{dt, dateutil:date_str()}]).
 
-%% Use to create request for use a specific Dt(datetime) string
+%% @doc Use to create request for use a specific date(dt) string
 -spec create_request(web_request:url(), Opts) -> #request{} when
   Opts :: [{dt, string()} | {product_info_location, list()}].
 create_request(Url, Opts) ->
   web:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
 
-
-%% @doc The target tag for the product map
-%% if a tag is a key only, it's value is the same as it's key in 'mochiweb_html'
-product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.

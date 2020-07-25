@@ -45,6 +45,8 @@ create_request(Url, Opts) ->
   web:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
 
 
+%% TODO: move the "file funcs" out of "raaw" module, not "raaw" specific
+
 %% file funcs
 
 -spec filename(#request{}) -> string().
@@ -79,9 +81,11 @@ file_write(Req = #request{}, Bytes) ->
 
 -spec file_read(#request{}) -> {ok, binary()} | {error, string()}.
 file_read(Req = #request{}) ->
-  file:read_file(raaw:filename(Req)).
+  file:read_file(filename(Req)).
 
 %% product map of JSON
+
+%% TODO: also not "raaw" specific
 
 -spec product_map(#request{}) -> map().
 product_map(Req = #request{}) ->

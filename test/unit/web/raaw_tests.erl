@@ -19,6 +19,5 @@ create_request_test() ->
   ?assertEqual(
     {request, "https://raawmtb.com/collections/frames-bikes/products/madonna-v2-frame-kit",
       "2020-07-19", "raawmtb", "madonna-v2-frame-kit",
-      undefined,
       {<<"id">>, <<"ProductJson-1">>}},
     Req).

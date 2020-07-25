@@ -17,6 +17,5 @@ create_request_test() ->
   ?assertEqual(
     {request, Url,
       "2020-07-19", "chromagbikes", "stylus-2020",
-      undefined,
       {<<"data-product-json">>, <<"data-product-json">>}},
     Req).

@@ -5,6 +5,5 @@
   dt,
   brand,
   bike,
-  product_info_location,
   product_map_target
 }).

@@ -16,6 +16,5 @@ create_request_test() ->
 
   ?assertEqual(
     {request, Url,
-      "2020-07-19", "raawmtb", "madonna-v2-frame-kit",
-      undefined, undefined},
+      "2020-07-19", "raawmtb", "madonna-v2-frame-kit", undefined},
     Req).

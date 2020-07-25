@@ -28,5 +28,5 @@ create_request(Url) ->
 -spec create_request(web_request:url(), Opts) -> #request{} when
   Opts :: [{dt, string()} | {product_map_target, list()}].
 create_request(Url, Opts) ->
-  web:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
+  web_request:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
 

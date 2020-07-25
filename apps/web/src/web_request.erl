@@ -10,20 +10,32 @@
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
 -export_type([url/0, dt/0]).
+-export([create_request/1, create_request/2]).
 
 %% Types
+
 -type url() :: string().
 
 %% datetime string of format: "2020-07-04" i.e. "YYYY-MM-DD"
 -type dt() :: string().
 
-%% Behaviors
--callback filename(#request{}) -> string().
+%% Functions
 
--callback dirname(#request{}) -> string().
+-spec create_request(web_request:url()) -> #request{}.
+create_request(Url) ->
+  create_request(Url, [{dt, dateutil:date_str()}]).
 
--callback file_read(#request{}) -> {ok, iodata()} | {error, Reason} when
-  Reason :: string().
+%% Use to create request for use a specific Dt(datetime) string
+-spec create_request(web_request:url(), Opts) -> #request{} when
+  Opts :: [{dt, web_request:dt()}].
+create_request(Url, Opts) ->
+  #request{
+    url = Url,
+    % optional arguments
+    dt = proplists:get_value(dt, Opts, dateutil:date_str()),
+    % computed properties
+    brand = web_url:brand(Url),
+    bike = web_url:bike(Url),
+    product_map_target = proplists:get_value(product_map_target, Opts)
+  }.
 
--callback file_write(#request{}, iodata()) -> ok | {error, Reason} when
-  Reason :: string().

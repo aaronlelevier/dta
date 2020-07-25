@@ -8,8 +8,7 @@
 -module(web).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([fetch_and_save/1, create_request/1, create_request/2,
-  fetch_page/1, findall/2, findsingle/2]).
+-export([fetch_and_save/1, fetch_page/1, findall/2, findsingle/2]).
 -include_lib("dta/include/macros.hrl").
 -include_lib("web/include/records.hrl").
 
@@ -22,25 +21,6 @@ fetch_and_save(Req = #request{}) ->
   Map = web_file:product_map(Req),
   ok = web_file:file_write_product_map(Req, Map),
   ok.
-
-
--spec create_request(web_request:url()) -> #request{}.
-create_request(Url) ->
-  create_request(Url, [{dt, dateutil:date_str()}]).
-
-%% Use to create request for use a specific Dt(datetime) string
--spec create_request(web_request:url(), Opts) -> #request{} when
-  Opts :: [{dt, web_request:dt()}].
-create_request(Url, Opts) ->
-  #request{
-    url = Url,
-    % optional arguments
-    dt = proplists:get_value(dt, Opts, dateutil:date_str()),
-    % computed properties
-    brand = web_url:brand(Url),
-    bike = web_url:bike(Url),
-    product_map_target = proplists:get_value(product_map_target, Opts)
-  }.
 
 
 %% @doc fetch a HTML page and caches it to the "priv/html" dir

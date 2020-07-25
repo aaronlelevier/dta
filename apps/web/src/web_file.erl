@@ -6,7 +6,6 @@
 %%% Created : 25. Jul 2020 7:22 AM
 %%%-------------------------------------------------------------------
 -module(web_file).
--behavior(web_request).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([filename/1, filename/2, dirname/1, file_read/1, file_write/2,

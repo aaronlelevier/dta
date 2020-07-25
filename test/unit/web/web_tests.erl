@@ -12,7 +12,7 @@
 create_request_test() ->
   Url = raaw_urls:madonna_v2_frame_kit(),
 
-  Req = web:create_request(Url, [{dt, dateutil:date_str(2020, 7, 19)}]),
+  Req = web_request:create_request(Url, [{dt, dateutil:date_str(2020, 7, 19)}]),
 
   ?assertEqual(
     {request, Url,

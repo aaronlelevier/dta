@@ -11,17 +11,10 @@
 -export([fetch_and_save/1, product_map_target/0, create_request/1, create_request/2]).
 -include_lib("web/include/records.hrl").
 
-
+%% @doc fetches web page and saves html of whole page and json of product map
 -spec fetch_and_save(web_request:url()) -> ok.
 fetch_and_save(Url) ->
-  % this needs to be bike specific
-  Req = create_request(Url),
-  % impl by "web_file" and dynamic per the "Req" value
-  {ok, Body} = web:fetch_page(Req#request.url),
-  ok = web_file:file_write(Req, Body),
-  Map = web_file:product_map(Req),
-  ok = web_file:file_write_product_map(Req, Map),
-  ok.
+  web:fetch_and_save(create_request(Url)).
 
 %% @doc The target tag for the product map
 product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.
@@ -33,7 +26,7 @@ create_request(Url) ->
 
 %% @doc Use to create request for use a specific date(dt) string
 -spec create_request(web_request:url(), Opts) -> #request{} when
-  Opts :: [{dt, string()} | {product_info_location, list()}].
+  Opts :: [{dt, string()} | {product_map_target, list()}].
 create_request(Url, Opts) ->
   web:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
 

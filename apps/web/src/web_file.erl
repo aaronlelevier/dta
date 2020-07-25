@@ -60,6 +60,6 @@ product_map(Req = #request{}) ->
 -spec file_write_product_map(#request{}, map()) -> ok.
 file_write_product_map(Req = #request{}, Map) ->
   ok = file:write_file(
-    raaw:filename(Req, [{extension, "json"}]),
+    filename(Req, [{extension, "json"}]),
     jsx:encode(Map, [{space, 1}, {indent, 2}])),
   ok.

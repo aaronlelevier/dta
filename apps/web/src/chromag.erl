@@ -6,7 +6,6 @@
 %%% Created : 02. Jul 2020 7:40 AM
 %%%-------------------------------------------------------------------
 -module(chromag).
--behavior(web_request).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([]).
@@ -16,80 +15,13 @@
 %% DEBUG
 -compile(export_all).
 
-%% TESTING
-stylus_url() -> "https://chromagbikes.com/collections/27-5-26/products/stylus-2020".
-
-%% #request{} constructors
--spec create_request(web_request:url()) -> #request{}.
-create_request(Url) -> #request{url = Url, dt = dateutil:now_timestamp_str()}.
-
--spec create_request(web_request:url(), web_request:dt()) -> #request{}.
-create_request(Url, Dt) -> #request{url = Url, dt = Dt}.
-
-
-%% web_request impl interface: start
-filename(Req = #request{}) ->
-  filename:join(dirname(Req), string:concat(Req#request.dt, ".html")).
-
-dirname(Req = #request{}) ->
-  Page = web:page_name(Req#request.url),
-  PrivDir = code:priv_dir(web),
-  filename:join([PrivDir, "html", Page]).
-
-file_read(_) ->
-  erlang:error(not_implemented).
-
-file_write(_, _) ->
-  erlang:error(not_implemented).
-
-%% web_request impl interface: stop
-
-
-main(Url) ->
-  {ok, ?MODULE} = db_start(),
-  % need to fetch and save to a file because all HTML manipulation uses File I/O
-  fetch_page_and_write_to_file(Url),
-  Inventory = inventory(Url),
-  Dt = dateutil:now_timestamp_str(),
-  ok = db_insert_all(Inventory, Dt),
-  ok = db_stop().
-
-
-%% NEXT: destructure the map
-%% TODO: hardcoded
-%% @doc Returns the Product JSON as an Erlang map
-%% NOTE: HTML file must already be cached
--spec product_map(Url :: string()) -> map().
-product_map(Url) ->
-  % reads the latest version of thi Url
-  Tree = html_tree(Url),
-  Bin = raw_json_data(Tree),
-  jsx:decode(Bin).
-
-
-%% @doc load HTML tree from a local file based on the Url
--spec html_tree(Url :: string()) -> tuple().
-html_tree(Url) ->
-  {ok, Bin} = read_file(Url),
-  mochiweb_html:parse(Bin).
-
-
-%% @doc destructure the HTML Tree to the JSON binary contents that we care about
--spec raw_json_data(Tree :: tuple()) -> binary().
-raw_json_data(Tree) ->
-  L = web:findall([<<"html">>, <<"body">>, <<"div">>, <<"main">>, <<"div">>, <<"section">>,
-    <<"div">>, <<"div">>, <<"div">>, <<"div">>, <<"script">>], Tree),
-  [H | _] = L,
-  {_A2, B2} = H,
-  [Bin | _] = B2,
-  Bin.
-
 %% Construct the inventory
 
 %% @doc returns a list of Product variants
 -spec variants(Url :: string()) -> [map()].
 variants(Url) ->
-  Map = product_map(Url),
+  Req = chromag2:create_request(Url),
+  Map = web_file:product_map(Req),
   Product = maps:get(<<"product">>, Map),
   maps:get(<<"variants">>, Product).
 
@@ -97,7 +29,8 @@ variants(Url) ->
 %% @doc Returns product map with inventory counts
 -spec inventory(Url :: string()) -> map().
 inventory(Url) ->
-  Map = product_map(Url),
+  Req = chromag2:create_request(Url),
+  Map = web_file:product_map(Req),
   Variants = variants(Url),
   Inventories = maps:get(<<"inventories">>, Map),
   inventory(Variants, Inventories, []).

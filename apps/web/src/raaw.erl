@@ -9,8 +9,15 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([
-  create_request/1, create_request/2, fetch_and_save/1, product_map_target/0]).
+  create_request/1, create_request/2, fetch_and_save/1, product_map_target/0,
+  fetch_and_save_all/0]).
 -include_lib("web/include/records.hrl").
+
+
+%% @doc fetches and saves the product JSON for all bikes
+-spec fetch_and_save_all() -> [ok].
+fetch_and_save_all() ->
+  [web:fetch_and_save(raaw:create_request(X)) || X <- raaw_urls:urls()].
 
 
 %% @doc fetches web page and saves html of whole page and json of product map

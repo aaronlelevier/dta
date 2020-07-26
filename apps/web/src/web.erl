@@ -20,6 +20,8 @@ fetch_and_save(Req = #request{}) ->
   ok = web_file:file_write(Req, Body),
   Map = web_file:product_map(Req),
   ok = web_file:file_write_product_map(Req, Map),
+  % remove the HTML file after JSON successfully saved
+  ok = file:delete(web_file:filename(Req)),
   ok.
 
 

@@ -13,9 +13,14 @@
 -include_lib("web/include/records.hrl").
 
 
-%% DEBUG
+%% DEBUG - needed for 'variant' and 'DETS' code below which is still in-flight
 -compile(export_all).
 
+
+%% @doc fetches and saves the product JSON for all bikes
+-spec fetch_and_save_all() -> [ok].
+fetch_and_save_all() ->
+  [web:fetch_and_save(chromag:create_request(X)) || X <- chromag_urls:urls()].
 
 %% @doc fetches web page and saves html of whole page and json of product map
 -spec fetch_and_save(web_request:url()) -> ok.
@@ -35,7 +40,6 @@ create_request(Url) ->
   Opts :: [{dt, string()} | {product_map_target, list()}].
 create_request(Url, Opts) ->
   web_request:create_request(Url, [{product_map_target, product_map_target()} | Opts]).
-
 
 
 %% Construct the inventory

@@ -6,6 +6,7 @@
 %%% Created : 02. Jul 2020 7:40 AM
 %%%-------------------------------------------------------------------
 -module(chromag).
+-behavior(bike_mod).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([fetch_and_save/1, product_map_target/0, create_request/1, create_request/2]).
@@ -15,6 +16,15 @@
 
 %% DEBUG - needed for 'variant' and 'DETS' code below which is still in-flight
 -compile(export_all).
+
+%%%%%% bike_mod behavior: start %%%%%%
+
+urls() ->
+  chromag_urls:urls().
+
+product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.
+
+%%%%%% bike_mod behavior: end %%%%%%
 
 
 %% @doc fetches and saves the product JSON for all bikes
@@ -26,9 +36,6 @@ fetch_and_save_all() ->
 -spec fetch_and_save(web_request:url()) -> ok.
 fetch_and_save(Url) ->
   web:fetch_and_save(create_request(Url)).
-
-%% @doc The target tag for the product map
-product_map_target() -> {<<"data-product-json">>, <<"data-product-json">>}.
 
 %% @doc Creates a "chromag" request where the date(dt) is defaulted to today
 -spec create_request(web_request:url()) -> #request{}.

@@ -6,12 +6,23 @@
 %%% Created : 11. Jul 2020 8:36 AM
 %%%-------------------------------------------------------------------
 -module(raaw).
+-behavior(bike_mod).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([
   create_request/1, create_request/2, fetch_and_save/1, product_map_target/0,
-  fetch_and_save_all/0]).
+  fetch_and_save_all/0, urls/0]).
 -include_lib("web/include/records.hrl").
+
+
+%%%%%% bike_mod behavior: start %%%%%%
+
+urls() ->
+  raaw_urls:urls().
+
+product_map_target() -> {<<"id">>,<<"ProductJson-1">>}.
+
+%%%%%% bike_mod behavior: end %%%%%%
 
 
 %% @doc fetches and saves the product JSON for all bikes
@@ -25,8 +36,6 @@ fetch_and_save_all() ->
 fetch_and_save(Url) ->
   web:fetch_and_save(create_request(Url)).
 
-%% @doc The target tag for the product map
-product_map_target() -> {<<"id">>,<<"ProductJson-1">>}.
 
 %% @doc Creates a "chromag" request where the date(dt) is defaulted to today
 -spec create_request(web_request:url()) -> #request{}.

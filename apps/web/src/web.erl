@@ -28,12 +28,14 @@ build_request(BikeMod, Opts) ->
   end.
 
 
+%% @doc Fetches and saves a single product_json
 fetch_single(BikeMod, Url) ->
   FunReq = build_request(BikeMod),
   ok = fetch_and_save(FunReq(Url)),
   ok.
 
 
+%% @doc Fetches and saves all product_json
 fetch_all(BikeMod) ->
   [fetch_single(BikeMod, X) || X <- BikeMod:urls()].
 

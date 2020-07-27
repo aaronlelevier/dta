@@ -13,8 +13,9 @@
 %% Tests
 create_request_test() ->
   Url = raaw_urls:madonna_v2_frame_kit(),
+  F = web:build_request(raaw, [{dt, dateutil:date_str(2020, 7, 19)}]),
 
-  Req = raaw:create_request(Url, [{dt, dateutil:date_str(2020, 7, 19)}]),
+  Req = F(Url),
 
   ?assertEqual(
     {request, "https://raawmtb.com/collections/frames-bikes/products/madonna-v2-frame-kit",

@@ -24,3 +24,7 @@ brand_test() ->
 bike_test() ->
   ?assertEqual("madonna-fox-factory-build", web_url:bike(raaw_url())),
   ?assertEqual("stylus-2020", web_url:bike(chromag_url())).
+
+bike_mod_test() ->
+  ?assertEqual(raaw, web_url:bike_mod(raaw_url())),
+  ?assertEqual(chromag, web_url:bike_mod(chromag_url())).

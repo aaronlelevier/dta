@@ -1,6 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Aaron Lelevier
-%%% @doc
+%%% @doc Module in charge of receiving reports from works and letting
+%%% them know they can exit when their work is done
 %%% @end
 %%%-------------------------------------------------------------------
 -module(web_reporter).
@@ -9,7 +10,7 @@
 -include_lib("dta/include/macros.hrl").
 
 %% API
--export([start_link/0, receive_report/1]).
+-export([start_link/0, notify/1]).
 
 %% gen_server
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
@@ -25,9 +26,9 @@
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-receive_report({Url, BikeMod}) ->
-  ?LOG({self(), receive_report, start}),
-  gen_server:call(?SERVER, {receive_report, {Url, BikeMod}}).
+notify({Pid, Url, BikeMod}) ->
+  ?LOG({self(), notify, start}),
+  gen_server:cast(?SERVER, {notify, {Pid, Url, BikeMod}}).
 
 %%%===================================================================
 %%% Spawning and gen_server implementation
@@ -36,11 +37,13 @@ receive_report({Url, BikeMod}) ->
 init([]) ->
   {ok, #{}}.
 
-handle_call({receive_report, {Url, BikeMod}}, _From, State) ->
-  ?LOG({self(), report_received, Url, BikeMod}),
+handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
-handle_cast(_Request, State) ->
+handle_cast({notify, {Pid, Url, BikeMod}}, State) ->
+  ?LOG({self(), report_received, Pid, Url, BikeMod}),
+  % reporter tells the worker to exit once their work is done
+  exit(Pid, shutdown),
   {noreply, State}.
 
 handle_info(_Info, State) ->

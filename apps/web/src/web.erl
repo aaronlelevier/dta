@@ -37,7 +37,7 @@ fetch_single(BikeMod, Url) ->
 
 %% @doc Fetches and saves all product_json
 fetch_all(BikeMod) ->
-  [fetch_single(BikeMod, X) || X <- BikeMod:urls()].
+  [fetch_single(BikeMod, Url) || Url <- BikeMod:urls()].
 
 
 %% @doc generic fetch page and save to html/json

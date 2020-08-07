@@ -10,7 +10,7 @@
 -include_lib("dta/include/macros.hrl").
 
 %% API
--export([start_link/0, notify/1]).
+-export([start_link/0, notify/1, init_workers/1]).
 
 %% gen_server
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
@@ -23,12 +23,19 @@
 %%% API
 %%%===================================================================
 
+%% @doc reporter will be started at application start
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+%% @doc notifications from works when they are done are sent here
 notify({Pid, Url, BikeMod}) ->
   ?LOG({self(), notify, start}),
   gen_server:cast(?SERVER, {notify, {Pid, Url, BikeMod}}).
+
+%% @doc this initializes all workers for a particular module to do work
+init_workers(Mod) ->
+  [web_sup:add_worker(X) || X <- Mod:urls()].
+
 
 %%%===================================================================
 %%% Spawning and gen_server implementation

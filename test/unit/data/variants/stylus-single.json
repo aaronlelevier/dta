@@ -1,0 +1,50 @@
+{
+  "available": false,
+  "barcode": "826974027030",
+  "compare_at_price": null,
+  "featured_image": {
+    "alt": null,
+    "created_at": "2020-01-14T14:23:43-08:00",
+    "height": 1600,
+    "id": 13997220659332,
+    "position": 3,
+    "product_id": 4465720393860,
+    "src": "https://cdn.shopify.com/s/files/1/0052/2783/9586/products/Stylus-2020-CRIMSON-TIDE.jpg?v=1579040864",
+    "updated_at": "2020-01-14T14:27:44-08:00",
+    "variant_ids": [
+      31742775263364,
+      31742775525508,
+      31742775623812,
+      31742775656580
+    ],
+    "width": 1600
+  },
+  "featured_media": {
+    "alt": null,
+    "id": 6173352886404,
+    "position": 3,
+    "preview_image": {
+      "aspect_ratio": 1.0,
+      "height": 1600,
+      "src": "https://cdn.shopify.com/s/files/1/0052/2783/9586/products/Stylus-2020-CRIMSON-TIDE.jpg?v=1579040623",
+      "width": 1600
+    }
+  },
+  "id": 31742775656580,
+  "inventory_management": "shopify",
+  "name": "Stylus - CRIMSON / M/L (Frame Only)",
+  "option1": "CRIMSON",
+  "option2": "M/L (Frame Only)",
+  "option3": null,
+  "options": [
+    "CRIMSON",
+    "M/L (Frame Only)"
+  ],
+  "price": 70900,
+  "public_title": "CRIMSON / M/L (Frame Only)",
+  "requires_shipping": true,
+  "sku": "FRAMES:STYLUS 20>CRIMSON+M/L",
+  "taxable": true,
+  "title": "CRIMSON / M/L (Frame Only)",
+  "weight": 2880
+}

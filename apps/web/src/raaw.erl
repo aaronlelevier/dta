@@ -11,7 +11,6 @@
 -vsn(1.0).
 -export([urls/0, product_map_target/0]).
 
-
 urls() ->
   raaw_urls:urls().
 

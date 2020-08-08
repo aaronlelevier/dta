@@ -9,7 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([filename/1, filename/2, dirname/1, file_read/1, file_write/2,
-  product_map/1, file_write_product_map/2]).
+  product_map/1, product_map/2, file_write_product_map/2]).
 -include_lib("web/include/records.hrl").
 
 -spec filename(#request{}) -> string().
@@ -48,6 +48,8 @@ file_read(Req = #request{}) ->
 
 %% product map of JSON functions %%
 
+%% TODO: 'product_map' should be able to read the JSON file directly
+
 -spec product_map(#request{}) -> map().
 product_map(Req = #request{}) ->
   {ok, Bin} = file_read(Req),
@@ -55,6 +57,20 @@ product_map(Req = #request{}) ->
   [Bin2 | _] = web_html:findsingle(Tree, Req#request.product_map_target),
   jsx:decode(Bin2).
 
+product_map(Req = #request{}, Opts) ->
+  Ext = proplists:get_value(extension, Opts, "html"),
+  Bin = case Ext of
+          "html" ->
+            {ok, Bytes} = file_read(Req),
+            Tree = mochiweb_html:parse(Bytes),
+            [Bin0 | _] = web_html:findsingle(Tree, Req#request.product_map_target),
+            Bin0;
+          "json" ->
+            Filename = filename(Req, [{extension, Ext}]),
+            {ok, Bin0} = file:read_file(Filename),
+            Bin0
+        end,
+  jsx:decode(Bin).
 
 -spec file_write_product_map(#request{}, map()) -> ok.
 file_write_product_map(Req = #request{}, Map) ->

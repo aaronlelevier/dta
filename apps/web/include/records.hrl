@@ -17,8 +17,8 @@
   id :: integer()
 }).
 
-%% @doc inventory-date is the inventory of a variant on a specific date
--record(inventory_data, {
+%% @doc inventory is the inventory of a variant on a specific date
+-record(inventory, {
   variant_id :: integer(),
   dt :: dateutil:date_string(),
   quantity :: integer()

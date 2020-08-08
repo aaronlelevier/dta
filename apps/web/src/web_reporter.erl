@@ -33,8 +33,12 @@ notify({Pid, Url, BikeMod}) ->
   gen_server:cast(?SERVER, {notify, {Pid, Url, BikeMod}}).
 
 %% @doc this initializes all workers for a particular module to do work
+%% type spec shows supported modules
+-spec init_workers(Module) -> ok when
+  Module :: raaw | chromag.
 init_workers(Mod) ->
-  [web_sup:add_worker(X) || X <- Mod:urls()].
+  [web_sup:add_worker(X) || X <- Mod:urls()],
+  ok.
 
 
 %%%===================================================================

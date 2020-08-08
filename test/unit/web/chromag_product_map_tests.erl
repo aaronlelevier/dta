@@ -13,7 +13,8 @@
 
 req() ->
   F = web:build_request(chromag, [{dt, dateutil:date_str(2020, 8, 8)}]),
-  F("https://chromagbikes.com/collections/27-5-26/products/stylus-2020").
+  Req = F("https://chromagbikes.com/collections/27-5-26/products/stylus-2020"),
+  Req.
 
 product_map() ->
   web_file:product_map(req(), [{extension, "json"}]).

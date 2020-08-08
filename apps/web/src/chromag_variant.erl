@@ -11,17 +11,17 @@
 -include_lib("web/include/records.hrl").
 -export([variant/2, build_variant/1, bike_size/1, color/1, price/1, id/1]).
 
--spec variant(web_request:url(), map()) -> #variant{}.
-variant(Url, Map) ->
-  F = build_variant(Url),
+-spec variant(#request{}, map()) -> #variant{}.
+variant(Req = #request{}, Map) ->
+  F = build_variant(Req),
   F(Map).
 
--spec build_variant(web_request:url()) -> fun((map()) -> #variant{}).
-build_variant(Url) ->
+-spec build_variant(#request{}) -> fun((map()) -> #variant{}).
+build_variant(Req = #request{}) ->
   fun(Map) ->
     #variant{
-      brand = web_url:brand(Url),
-      bike = web_url:bike(Url),
+      brand = web_url:brand(Req#request.url),
+      bike = web_url:bike(Req#request.url),
       size = bike_size(Map),
       color = color(Map),
       price = price(Map),

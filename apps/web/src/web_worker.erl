@@ -47,7 +47,7 @@ handle_cast({send_report, {Url, BikeMod}}, State) ->
   % fetch the web page and store results
   ok = web:fetch_single(BikeMod, Url),
   % notify reporter our work is done
-  web_reporter:notify({self(), Url, BikeMod}),
+  web_reporter:work_done({self(), Url, BikeMod}),
   {noreply, State}.
 
 handle_info(_Info, State) ->

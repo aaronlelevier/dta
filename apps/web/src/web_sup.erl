@@ -9,7 +9,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/0, add_worker/1]).
+-export([start_link/0, start_worker/1]).
 
 -export([init/1]).
 
@@ -43,7 +43,7 @@ init([]) ->
 
   {ok, {SupFlags, ChildSpecs}}.
 
-add_worker(Url) ->
+start_worker(Url) ->
   supervisor:start_child(?SERVER, #{
     id => Url,
     start => {web_worker, start_link, [Url]},
@@ -52,6 +52,5 @@ add_worker(Url) ->
     type => worker,
     modules => [web_worker, gen_server]
   }).
-
 
 %% internal functions

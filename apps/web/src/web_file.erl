@@ -8,8 +8,9 @@
 -module(web_file).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([filename/1, filename/2, dirname/1, file_read/1, file_write/2,
-  product_map/1, product_map/2, file_write_product_map/2]).
+-export([filename/1, filename/2, dirname/1, brand_dirname/1,
+  file_read/1, file_write/2,
+  product_map/1, product_map/2, file_write_product_map/2, brand_date_dirnames/1]).
 -include_lib("web/include/records.hrl").
 
 -spec filename(#request{}) -> string().
@@ -28,6 +29,7 @@ filename(Req = #request{}, Opts) ->
     string:concat(Req#request.bike, string:concat(".", Ext))
   ).
 
+%% @doc Returns the abs path to the dated dirname based on the 'Req'
 -spec dirname(#request{}) -> string().
 dirname(Req = #request{}) ->
   filename:join([
@@ -35,6 +37,20 @@ dirname(Req = #request{}) ->
     Req#request.brand,
     Req#request.dt
   ]).
+
+%% @doc Returns the abs path to the brand dirname based on the 'Req'
+-spec brand_dirname(#request{}) -> string().
+brand_dirname(Req = #request{}) ->
+  filename:join([
+    code:priv_dir(web),
+    Req#request.brand
+  ]).
+
+%% @doc Returns a list of date dirnames for a brand in DESC order
+-spec brand_date_dirnames(#request{}) -> [string()].
+brand_date_dirnames(Req = #request{}) ->
+  {ok, Filenames} = file:list_dir(web_file:brand_dirname(Req)),
+  lists:sort(fun(A,B) -> A > B end, Filenames).
 
 -spec file_write(#request{}, [byte()]) -> ok | {error, string()}.
 file_write(Req = #request{}, Bytes) ->

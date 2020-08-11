@@ -9,9 +9,20 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([fetch_and_save/1, fetch_page/1, findall/2, findsingle/2,
+  create_request/1, create_request/2,
   build_request/1, build_request/2, fetch_single/2, fetch_all/1]).
 -include_lib("dta/include/macros.hrl").
 -include_lib("web/include/records.hrl").
+
+
+create_request(Url) ->
+  create_request(Url, []).
+
+
+create_request(Url, Opts) ->
+  BikeMod = web_url:bike_mod(Url),
+  F = build_request(BikeMod, Opts),
+  F(Url).
 
 
 build_request(BikeMod) ->

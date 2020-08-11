@@ -9,7 +9,8 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
--export([variant/2, build_variant/1, bike_size/1, color/1, price/1, id/1]).
+-export([variant/2, build_variant/1, bike_size/1, color/1, price/1, id/1,
+  variant_map/1]).
 
 -spec variant(#request{}, map()) -> #variant{}.
 variant(Req = #request{}, Map) ->
@@ -40,3 +41,13 @@ price(Map) -> maps:get(<<"price">>, Map).
 
 -spec id(map()) -> integer().
 id(Map) -> maps:get(<<"id">>, Map).
+
+%% @doc Returns a map where the Key is the variant_id and the value
+%% is a #variant{} record
+-spec variant_map(#request{}) -> #{web_types:variant_id() => #variant{}}.
+variant_map(Req = #request{}) ->
+  BikeMaps = chromag_product_map:bike_maps(Req),
+  maps:from_list([
+    {maps:get(<<"id">>, X), variant(Req, X)}
+    || X <- BikeMaps
+  ]).

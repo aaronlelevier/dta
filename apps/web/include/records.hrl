@@ -9,12 +9,12 @@
 
 %% @doc variant is a single unique bike by brand, size, etc..
 -record(variant, {
+  id :: integer(),
   brand :: string(),
   bike :: string(),
   size :: string(),
   color :: string(),
-  price :: integer(),
-  id :: integer()
+  price :: integer()
 }).
 
 %% @doc inventory is the inventory of a variant on a specific date
@@ -22,4 +22,23 @@
   variant_id :: integer(),
   dt :: dateutil:date_string(),
   quantity :: integer()
+}).
+
+%% @doc inventory diff of a variant
+-record(inventory_diff, {
+  variant_id :: integer(),
+  quantity :: integer(),
+  prev_quantity :: integer()
+}).
+
+%% @doc 'variant' and 'inventory_diff' combined record
+-record(variant_inventory_diff, {
+  id :: integer(),
+  brand :: string(),
+  bike :: string(),
+  size :: string(),
+  color :: string(),
+  price :: integer(),
+  quantity :: integer(),
+  prev_quantity :: integer()
 }).

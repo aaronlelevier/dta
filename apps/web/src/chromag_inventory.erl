@@ -11,6 +11,8 @@
 -export([variant_map/1, inventory_diff/1, diff_variant_map/2, inventory/2, build_inventory/1]).
 -include_lib("web/include/records.hrl").
 
+-compile(export_all).
+
 %% Types
 
 -type cur_quantity() :: integer().
@@ -45,9 +47,9 @@ variant_map(Req = #request{}) ->
   ]).
 
 -spec inventory_diff(web_request:url()) -> inventory_diff().
-inventory_diff(Url) ->
+inventory_diff(Req = #request{}) ->
   % get the last dirname dates for which we have data
-  Req = web_request:create_request(Url),
+  Url = Req#request.url,
   [Dt, PrevDt | _] = web_file:brand_date_dirnames(Req),
   % requests
   CurReq = web:create_request(Url, [{dt, Dt}]),
@@ -58,9 +60,12 @@ inventory_diff(Url) ->
   % find diff
   diff_variant_map(CurMap, PrevMap).
 
+%% @doc inventory counts NOT pre-filtered for changes in count
 -spec diff_variant_map(map(), map()) -> inventory_diff().
 diff_variant_map(CurMap, PrevMap) ->
   L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap)),
-  [{Id, Cur#inventory.quantity, Prev#inventory.quantity} ||
-    {{Id, Cur}, {Id, Prev}} <- L,
-    Cur#inventory.quantity /= Prev#inventory.quantity].
+  maps:from_list([{Id, #inventory_diff{
+    variant_id = Id,
+    quantity = Cur#inventory.quantity,
+    prev_quantity = Prev#inventory.quantity}} ||
+    {{Id, Cur}, {Id, Prev}} <- L]).

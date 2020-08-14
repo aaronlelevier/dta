@@ -10,10 +10,18 @@
 -vsn(1.0).
 -export([urls/0, href_blocks/1, extract_hrefs/1, format_urls/1]).
 
+-define(USE_CACHE, true).
 
 %% @doc queries the home page and returns a list of all bike Urls we care about
 -spec urls() -> [web_request:url()].
 urls() ->
+  case ?USE_CACHE of
+    true -> cached_urls();
+    false -> fetch_urls()
+  end .
+
+-spec fetch_urls() -> [web_request:url()].
+fetch_urls() ->
   {ok, Body} = web:fetch_page("https://chromagbikes.com/"),
   Tree = mochiweb_html:parse(list_to_binary(Body)),
 
@@ -33,6 +41,19 @@ urls() ->
   Urls = extract_hrefs(HrefBlocks),
 
   format_urls(Urls).
+
+-spec cached_urls() -> [web_request:url()].
+cached_urls() ->
+  ["https://chromagbikes.com/collections/29-27/products/frames-arcturian",
+    "https://chromagbikes.com/collections/29-27/products/frames-doctahawk",
+    "https://chromagbikes.com/collections/29-27/products/frames-primer",
+    "https://chromagbikes.com/collections/29-27/products/frames-rootdown-20",
+    "https://chromagbikes.com/collections/29-27/products/frames-surface",
+    "https://chromagbikes.com/collections/29-27/products/frames-surface-ti-19",
+    "https://chromagbikes.com/collections/27-5-26/products/frames-sam65",
+    "https://chromagbikes.com/collections/27-5-26/products/stylus-2020",
+    "https://chromagbikes.com/collections/27-5-26/products/frames-wideangle-19",
+    "https://chromagbikes.com/collections/26/products/frames-monk-20"].
 
 
 %% @doc finds all HrefBlocks from the Divs

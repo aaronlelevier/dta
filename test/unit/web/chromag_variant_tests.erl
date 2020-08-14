@@ -21,8 +21,8 @@ req() ->
   Req.
 
 expected_variant() ->
-  {variant,"chromagbikes","stylus-2020","S (Frame Only)",
-    "CRIMSON",70900,31742775263364}.
+  {variant, 31742775263364, "chromagbikes", "stylus-2020", "S (Frame Only)",
+    "CRIMSON", 70900}.
 
 bike_map() ->
   [H | _] = chromag_product_map:bike_maps(req()),

@@ -25,4 +25,12 @@ bike_map() ->
 inventory_test() ->
   Ret = chromag_inventory:inventory(req(), bike_map()),
 
-  ?assertEqual(Ret, {inventory, 31742775263364, "2020-08-08", -1}).
+  ?assertEqual({inventory, 31742775263364, "2020-08-08", -1}, Ret).
+
+inventory_diff_test() ->
+  Ret = chromag_inventory:inventory_diff(req()),
+  ?assert(is_map(Ret)),
+
+  [{Id, InventoryDiff} | _] = maps:to_list(Ret),
+  ?assertEqual(31742775230596, Id),
+  ?assertEqual({inventory_diff, 31742775230596, -3, -4}, InventoryDiff).

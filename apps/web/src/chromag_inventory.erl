@@ -1,6 +1,6 @@
 %%%-------------------------------------------------------------------
 %%% @author Aaron Lelevier
-%%% @doc
+%%% @doc Module for interacting with 'inventory' and 'inventory_diff' records
 %%%
 %%% @end
 %%% Created : 08. Aug 2020 8:04 AM
@@ -8,45 +8,21 @@
 -module(chromag_inventory).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([variant_map/1, inventory_diff/1, diff_variant_map/2, inventory/2, build_inventory/1]).
+-export([inventory/2, inventory_diff/1]).
 -include_lib("web/include/records.hrl").
 
--compile(export_all).
-
-%% Types
-
--type cur_quantity() :: integer().
--type prev_quantity() :: integer().
--type inventory_diff() :: [{web_types:variant_id(), cur_quantity(), prev_quantity()}].
-
-%% Functions
+%% Public API
 
 -spec inventory(#request{}, map()) -> #inventory{}.
-inventory(Req = #request{}, Map) ->
-  F = build_inventory(Req),
-  F(Map).
+inventory(Req = #request{}, BikeMap) ->
+  #inventory{
+    variant_id = maps:get(<<"id">>, BikeMap),
+    dt = Req#request.dt,
+    quantity = maps:get(<<"inventory_quantity">>, BikeMap)
+  }.
 
--spec build_inventory(#request{}) -> fun((map()) -> #inventory{}).
-build_inventory(Req = #request{}) ->
-  fun(Map) ->
-    #inventory{
-      variant_id = maps:get(<<"id">>, Map),
-      dt = Req#request.dt,
-      quantity = maps:get(<<"inventory_quantity">>, Map)
-    }
-  end.
-
-%% @doc Returns a Map where the Key is the variant_id and the value
-%% is a #inventory{} record
--spec variant_map(#request{}) -> #{web_types:variant_id() => #inventory{}}.
-variant_map(Req = #request{}) ->
-  BikeMaps = chromag_product_map:bike_maps(Req),
-  maps:from_list([
-    {maps:get(<<"id">>, X), inventory(Req, X)}
-    || X <- BikeMaps
-  ]).
-
--spec inventory_diff(web_request:url()) -> inventory_diff().
+-spec inventory_diff(web_request:url()) ->
+  #{web_types:variant_id() => #inventory_diff{}}.
 inventory_diff(Req = #request{}) ->
   % get the last dirname dates for which we have data
   Url = Req#request.url,
@@ -60,8 +36,21 @@ inventory_diff(Req = #request{}) ->
   % find diff
   diff_variant_map(CurMap, PrevMap).
 
+%% Public API
+
+%% @doc Returns a Map where the Key is the variant_id and the value
+%% is a #inventory{} record
+-spec variant_map(#request{}) -> #{web_types:variant_id() => #inventory{}}.
+variant_map(Req = #request{}) ->
+  BikeMaps = chromag_product_map:bike_maps(Req),
+  maps:from_list([
+    {maps:get(<<"id">>, X), inventory(Req, X)}
+    || X <- BikeMaps
+  ]).
+
 %% @doc inventory counts NOT pre-filtered for changes in count
--spec diff_variant_map(map(), map()) -> inventory_diff().
+-spec diff_variant_map(map(), map()) ->
+  #{web_types:variant_id() => #inventory_diff{}}.
 diff_variant_map(CurMap, PrevMap) ->
   L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap)),
   maps:from_list([{Id, #inventory_diff{

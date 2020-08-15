@@ -8,19 +8,8 @@
 -module(chromag_inventory_tests).
 -author("Aaron Lelevier").
 -include_lib("eunit/include/eunit.hrl").
+-import(eunit_helpers, [req/0, bike_map/0]).
 
-%% Helpers
-
-req() ->
-  F = web:build_request(chromag, [{dt, dateutil:date_str(2020, 8, 8)}]),
-  Req = F("https://chromagbikes.com/collections/27-5-26/products/stylus-2020"),
-  Req.
-
-bike_map() ->
-  [H | _] = chromag_product_map:bike_maps(req()),
-  H.
-
-%% Tests
 
 inventory_test() ->
   Ret = chromag_inventory:inventory(req(), bike_map()),
@@ -33,4 +22,4 @@ inventory_diff_test() ->
 
   [{Id, InventoryDiff} | _] = maps:to_list(Ret),
   ?assertEqual(31742775230596, Id),
-  ?assertEqual({inventory_diff, 31742775230596, -3, -4}, InventoryDiff).
+  ?assertEqual({inventory_diff, 31742775230596, -3, -3}, InventoryDiff).

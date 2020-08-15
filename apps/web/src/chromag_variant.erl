@@ -9,26 +9,36 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
--export([variant/2, build_variant/1, bike_size/1, color/1, price/1, id/1,
-  variant_map/1]).
+-export([variant/2, variant_map/1]).
+
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 -spec variant(#request{}, map()) -> #variant{}.
 variant(Req = #request{}, Map) ->
-  F = build_variant(Req),
-  F(Map).
+  #variant{
+    brand = web_url:brand(Req#request.url),
+    bike = web_url:bike(Req#request.url),
+    size = bike_size(Map),
+    color = color(Map),
+    price = price(Map),
+    id = id(Map)
+  }.
 
--spec build_variant(#request{}) -> fun((map()) -> #variant{}).
-build_variant(Req = #request{}) ->
-  fun(Map) ->
-    #variant{
-      brand = web_url:brand(Req#request.url),
-      bike = web_url:bike(Req#request.url),
-      size = bike_size(Map),
-      color = color(Map),
-      price = price(Map),
-      id = id(Map)
-    }
-  end.
+%% @doc Returns a map where the Key is the variant_id and the value
+%% is a #variant{} record
+-spec variant_map(#request{}) -> #{web_types:variant_id() => #variant{}}.
+variant_map(Req = #request{}) ->
+  BikeMaps = chromag_product_map:bike_maps(Req),
+  maps:from_list([
+    {maps:get(<<"id">>, X), variant(Req, X)}
+    || X <- BikeMaps
+  ]).
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
 
 -spec bike_size(map()) -> string().
 bike_size(Map) -> binary_to_list(maps:get(<<"option2">>, Map)).
@@ -41,13 +51,3 @@ price(Map) -> maps:get(<<"price">>, Map).
 
 -spec id(map()) -> integer().
 id(Map) -> maps:get(<<"id">>, Map).
-
-%% @doc Returns a map where the Key is the variant_id and the value
-%% is a #variant{} record
--spec variant_map(#request{}) -> #{web_types:variant_id() => #variant{}}.
-variant_map(Req = #request{}) ->
-  BikeMaps = chromag_product_map:bike_maps(Req),
-  maps:from_list([
-    {maps:get(<<"id">>, X), variant(Req, X)}
-    || X <- BikeMaps
-  ]).

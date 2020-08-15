@@ -11,7 +11,9 @@
 -export([inventory/2, inventory_diff/1]).
 -include_lib("web/include/records.hrl").
 
-%% Public API
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 -spec inventory(#request{}, map()) -> #inventory{}.
 inventory(Req = #request{}, BikeMap) ->
@@ -36,7 +38,9 @@ inventory_diff(Req = #request{}) ->
   % find diff
   diff_variant_map(CurMap, PrevMap).
 
-%% Private API
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
 
 %% @doc Returns a Map where the Key is the variant_id and the value
 %% is a #inventory{} record

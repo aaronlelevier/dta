@@ -8,8 +8,12 @@
 -module(chromag_variant_inventory).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([diffs/1, diff/2]).
+-export([diffs/1]).
 -include_lib("web/include/records.hrl").
+
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 %% @doc All diffs for a single 'request'
 -spec diffs(#request{}) -> [#variant_inventory_diff{}].
@@ -19,7 +23,10 @@ diffs(Req = #request{}) ->
   [diff(maps:get(Id, Variants), InventoryDiff) ||
     {Id, InventoryDiff} <- maps:to_list(InventoryDiffs)].
 
-%% @doc Combines a 'variant' and an 'inventory_diff'
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
 -spec diff(#variant{}, #inventory_diff{}) -> #variant_inventory_diff{}.
 diff(Variant = #variant{}, InventoryDiff = #inventory_diff{}) ->
   Proplist = lists:merge(

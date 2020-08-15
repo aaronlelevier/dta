@@ -29,7 +29,7 @@ fetch_urls() ->
   NavTree = web_html:findsingle(
     Tree, {<<"class">>, <<"HorizontalList HorizontalList--spacingExtraLoose">>}),
 
-  [DivsA, DivsB, DivsC | _] = web:findall(
+  [DivsA, DivsB, DivsC | _] = web_html:findall(
     [<<"li">>, <<"div">>, <<"div">>, <<"div">>], NavTree),
 
   HrefBlocks = lists:flatten([
@@ -59,7 +59,7 @@ cached_urls() ->
 %% @doc finds all HrefBlocks from the Divs
 -spec href_blocks(list()) -> list().
 href_blocks(Divs) ->
-  web:findall([<<"ul">>, <<"li">>, <<"a">>], element(2, Divs)).
+  web_html:findall([<<"ul">>, <<"li">>, <<"a">>], element(2, Divs)).
 
 
 %% @doc extracts hrefs from their surrounding data blocks

@@ -8,12 +8,16 @@
 -module(eunit_helpers).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([url/0, req/0, raaw_req/0, product_map/0, bike_map/0]).
+-export([url/0, raaw_url/0, req/0, raaw_req/0, product_map/0, bike_map/0]).
 -include_lib("web/include/records.hrl").
 
 -spec url() -> string().
 url() ->
   "https://chromagbikes.com/collections/27-5-26/products/stylus-2020".
+
+-spec raaw_url() -> string().
+raaw_url() ->
+  raaw_urls:madonna_v2_frame_kit().
 
 -spec req() -> #request{}.
 req() ->

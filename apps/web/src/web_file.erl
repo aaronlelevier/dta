@@ -9,7 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([filename/1, filename/2, dirname/1, brand_dirname/1,
-  file_read/1, file_write/2,
+  file_read/1, file_write/2, file_delete/1,
   product_map/1, product_map/2, file_write_product_map/2, brand_date_dirnames/1]).
 -include_lib("web/include/records.hrl").
 
@@ -61,6 +61,18 @@ file_write(Req = #request{}, Bytes) ->
 -spec file_read(#request{}) -> {ok, binary()} | {error, string()}.
 file_read(Req = #request{}) ->
   file:read_file(filename(Req)).
+
+%% @doc Gracefully deletes a file whether it exists or not
+-spec file_delete(string()) -> ok.
+file_delete(Filename) ->
+  case filelib:is_regular(Filename) of
+    true ->
+      file:delete(Filename),
+      % assumes that there was only 1 file in the Dir then tries to delete Dir
+      file:del_dir(filename:dirname(Filename));
+    false ->
+      ok
+  end.
 
 %% product map of JSON functions %%
 

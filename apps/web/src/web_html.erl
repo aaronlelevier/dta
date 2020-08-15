@@ -8,7 +8,7 @@
 -module(web_html).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([extract_content/1, findsingle/2]).
+-export([extract_content/1, findall/2, findsingle/2]).
 
 %%
 -spec extract_content(list()) -> binary().
@@ -18,6 +18,20 @@ extract_content(L) ->
   [Bin | _] = B2,
   Bin.
 
+%% credit: [jaerlang2](https://pragprog.com/titles/jaerlang2/#resources)
+findall(Path, Tree) ->
+  L1 = findall(Tree, lists:reverse(Path), [], []),
+  lists:reverse(L1).
+
+findall({Tag, A, C}, [Tag | Path], Path, L) ->
+  [{A, C} | L];
+findall({Tag, _, C}, Want, Path, L) ->
+  findall(C, Want, [Tag | Path], L);
+findall([H | T], Want, Path, L) ->
+  L1 = findall(H, Want, Path, L),
+  findall(T, Want, Path, L1);
+findall(_, _, _, L) ->
+  L.
 
 %% @doc Find a single HTML DOM Element's contents
 findsingle(Tree, Target) ->

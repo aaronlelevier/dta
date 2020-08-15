@@ -12,14 +12,10 @@
 
 %% Helpers
 req() ->
-  Url = raaw_urls:madonna_v2_frame_kit(),
-  Opts = [{dt, dateutil:date_str(2020, 7, 19)}],
-  F = web:build_request(raaw, Opts),
-  F(Url).
-%%  raaw:create_request(
-%%    raaw_urls:madonna_v2_frame_kit(), [{dt, dateutil:date_str(2020, 6, 11)}]).
+  eunit_helpers:raaw_req().
 
 %% Tests
+
 filename_test() ->
   Req = req(),
   ?assertEqual(

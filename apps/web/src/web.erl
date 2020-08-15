@@ -8,12 +8,15 @@
 -module(web).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([fetch_and_save/1, fetch_page/1, findall/2, findsingle/2,
-  create_request/1, create_request/2,
-  build_request/1, build_request/2, fetch_single/2, fetch_all/1]).
+-export([create_request/1, create_request/2,
+  fetch_and_save/1, fetch_page/1, findall/2, findsingle/2,
+  fetch_single/2, fetch_all/1]).
 -include_lib("dta/include/macros.hrl").
 -include_lib("web/include/records.hrl").
 
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 create_request(Url) ->
   create_request(Url, []).
@@ -21,28 +24,14 @@ create_request(Url) ->
 
 create_request(Url, Opts) ->
   BikeMod = web_url:bike_mod(Url),
-  F = build_request(BikeMod, Opts),
-  F(Url).
-
-
-build_request(BikeMod) ->
-  fun(Url) ->
-    web_request:create_request(
-      Url, [{product_map_target, BikeMod:product_map_target()}])
-  end.
-
-
-build_request(BikeMod, Opts) ->
-  fun(Url) ->
-    web_request:create_request(
-      Url, [{product_map_target, BikeMod:product_map_target()} | Opts])
-  end.
+  web_request:create_request(
+    Url, [{product_map_target, BikeMod:product_map_target()} | Opts]).
 
 
 %% @doc Fetches and saves a single product_json
-fetch_single(BikeMod, Url) ->
-  FunReq = build_request(BikeMod),
-  ok = fetch_and_save(FunReq(Url)),
+fetch_single(_BikeMod, Url) ->
+  Req = create_request(Url),
+  ok = fetch_and_save(Req),
   ok.
 
 

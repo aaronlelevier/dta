@@ -27,8 +27,6 @@ create_request(Url, Opts) ->
 
 %%%% @doc Fetches and saves a single bike/brand's product JSON and saves
 %%%% it to a file
-%%-spec fetch_single(web_request:url()) -> ok.
-
 fetch_single(Url) when is_list(Url) ->
   fetch_single(create_request(Url));
 fetch_single(Req = #request{}) ->
@@ -39,7 +37,6 @@ fetch_single(Req = #request{}) ->
   % remove the HTML file after JSON successfully saved
   ok = file:delete(web_file:filename(Req)),
   ok.
-
 
 %% @doc fetch a HTML page and caches it to the "priv/html" dir
 %% returns binary() of page contents

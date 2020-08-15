@@ -76,15 +76,11 @@ file_delete(Filename) ->
 
 %% product map of JSON functions %%
 
-%% TODO: 'product_map' should be able to read the JSON file directly
-
 -spec product_map(#request{}) -> map().
 product_map(Req = #request{}) ->
-  {ok, Bin} = file_read(Req),
-  Tree = mochiweb_html:parse(Bin),
-  [Bin2 | _] = web_html:findsingle(Tree, Req#request.product_map_target),
-  jsx:decode(Bin2).
+  product_map(Req, []).
 
+-spec product_map(#request{}, list()) -> map().
 product_map(Req = #request{}, Opts) ->
   Ext = proplists:get_value(extension, Opts, "html"),
   Bin = case Ext of

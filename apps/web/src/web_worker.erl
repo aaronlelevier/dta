@@ -25,8 +25,7 @@
 start_link(Url) ->
   {ok, Pid} = gen_server:start_link(?MODULE, [Url], []),
   % use the brand to lookup the BikeMod
-  BikeMod = web_url:bike_mod(Url),
-  fetch_page(Pid, {Url, BikeMod}),
+  fetch_page(Pid, Url),
   {ok, Pid}.
 
 
@@ -41,13 +40,13 @@ init([Url]=Args) ->
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
-handle_cast({send_report, {Url, BikeMod}}, State) ->
+handle_cast({send_report, Url}, State) ->
   ?LOG({state, State}),
-  ?LOG({self(), report_sent, Url, BikeMod}),
+  ?LOG({self(), report_sent, Url}),
   % fetch the web page and store results
-  ok = web:fetch_single(BikeMod, Url),
+  ok = web:fetch_single(Url),
   % notify reporter our work is done
-  web_reporter:work_done({self(), Url, BikeMod}),
+  web_reporter:work_done({self(), Url}),
   {noreply, State}.
 
 handle_info(_Info, State) ->
@@ -63,6 +62,6 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
-fetch_page(Pid, {Url, BikeMod}) ->
+fetch_page(Pid, Url) ->
   ?LOG({self(), send_report, start}),
-  gen_server:cast(Pid, {send_report, {Url, BikeMod}}).
+  gen_server:cast(Pid, {send_report, Url}).

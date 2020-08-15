@@ -37,9 +37,9 @@ send_work(BikeMod) ->
   poll(worker_pids()).
 
 %% @doc notifications from works when they are done are sent here
-work_done({Pid, Url, BikeMod}) ->
+work_done({Pid, Url}) ->
   ?LOG({self(), work_done, start}),
-  gen_server:cast(?SERVER, {work_done, {Pid, Url, BikeMod}}).
+  gen_server:cast(?SERVER, {work_done, {Pid, Url}}).
 
 
 %%%===================================================================
@@ -61,8 +61,8 @@ handle_call(wait_for_complete, _From, State) ->
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
-handle_cast({work_done, {Pid, Url, BikeMod}}, State) ->
-  ?LOG({self(), work_done, Pid, Url, BikeMod, {state, State}}),
+handle_cast({work_done, {Pid, Url}}, State) ->
+  ?LOG({self(), work_done, Pid, Url, {state, State}}),
   % reporter tells the worker to exit once their work is done
   exit(Pid, shutdown),
   % reporter state updated to remove worker Pid now that they are finished

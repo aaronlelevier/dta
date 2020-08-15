@@ -10,7 +10,7 @@
 -vsn(1.0).
 -export([create_request/1, create_request/2,
   fetch_and_save/1, fetch_page/1, findall/2, findsingle/2,
-  fetch_single/2, fetch_all/1]).
+  fetch_single/1]).
 -include_lib("dta/include/macros.hrl").
 -include_lib("web/include/records.hrl").
 
@@ -21,7 +21,6 @@
 create_request(Url) ->
   create_request(Url, []).
 
-
 create_request(Url, Opts) ->
   BikeMod = web_url:bike_mod(Url),
   web_request:create_request(
@@ -29,15 +28,10 @@ create_request(Url, Opts) ->
 
 
 %% @doc Fetches and saves a single product_json
-fetch_single(_BikeMod, Url) ->
-  Req = create_request(Url),
-  ok = fetch_and_save(Req),
+-spec fetch_single(web_request:url()) -> ok.
+fetch_single(Url) ->
+  ok = fetch_and_save(create_request(Url)),
   ok.
-
-
-%% @doc Fetches and saves all product_json
-fetch_all(BikeMod) ->
-  [fetch_single(BikeMod, Url) || Url <- BikeMod:urls()].
 
 
 %% @doc generic fetch page and save to html/json

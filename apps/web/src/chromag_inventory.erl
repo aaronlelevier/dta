@@ -36,7 +36,7 @@ inventory_diff(Req = #request{}) ->
   % find diff
   diff_variant_map(CurMap, PrevMap).
 
-%% Public API
+%% Private API
 
 %% @doc Returns a Map where the Key is the variant_id and the value
 %% is a #inventory{} record

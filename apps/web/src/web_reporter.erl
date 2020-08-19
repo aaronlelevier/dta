@@ -10,7 +10,7 @@
 -include_lib("dta/include/macros.hrl").
 
 %% API
--export([start_link/0, send_work/1, work_done/1]).
+-export([start_link/0, send_work/1, work_done/1, work_failed/1]).
 
 %% gen_server
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2,
@@ -41,6 +41,10 @@ work_done({Pid, Url}) ->
   ?LOG({self(), work_done, start}),
   gen_server:cast(?SERVER, {work_done, {Pid, Url}}).
 
+work_failed({Pid, Url}) ->
+  ?LOG({self(), work_failed, Url}),
+  gen_server:cast(?SERVER, {work_failed, {Pid, Url}}).
+
 
 %%%===================================================================
 %%% Spawning and gen_server implementation
@@ -66,10 +70,7 @@ handle_cast({work_done, {Pid, Url}}, State) ->
   % reporter tells the worker to exit once their work is done
   exit(Pid, shutdown),
   % reporter state updated to remove worker Pid now that they are finished
-  Pids = maps:get(pids, State),
-  NewState = State#{pids => lists:delete(Pid, Pids)},
-  ?LOG({new_state, NewState}),
-  {noreply, NewState}.
+  {noreply, remove_pid(Pid, State)}.
 
 handle_info(_Info, State) ->
   {noreply, State}.
@@ -100,3 +101,10 @@ poll(_Pids) ->
   poll(worker_pids()).
 
 worker_pids() -> gen_server:call(?SERVER, wait_for_complete).
+
+%% @doc Remove a Pid from the state
+remove_pid(Pid, State) ->
+  Pids = maps:get(pids, State),
+  NewState = State#{pids => lists:delete(Pid, Pids)},
+  ?LOG({new_state, NewState}),
+  NewState.

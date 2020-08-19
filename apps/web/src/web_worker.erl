@@ -52,7 +52,9 @@ handle_cast({send_report, Url}, State) ->
 handle_info(_Info, State) ->
   {noreply, State}.
 
-terminate(_Reason, _State) ->
+terminate(Reason, State) ->
+  ?LOG({Reason, State}),
+  web_reporter:work_failed({self(), State}),
   ok.
 
 code_change(_OldVsn, State, _Extra) ->

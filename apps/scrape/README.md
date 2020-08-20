@@ -17,21 +17,13 @@ If there's a dependency that the escript needs, it should be added in the applic
 
 Syntax is:
 
-    $ _build/default/bin/scrape <bike> <url>
-
-Meta AM 29:
-
-    $ _build/default/bin/scrape MetaAm29 https://www.commencalusa.com/meta-am-29-c102x3872635
-    
-Or Clash for example:
-
-    $ _build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
+    $ _build/default/bin/scrape
 
 ### Run with Cron
 
 Initially source the `env-file` so the required environment variables are present, then run escript with params
 
-    $ * * * * * source $HOME/<env-file> && /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape Clash https://www.commencalusa.com/clash-c102x3872636
+    $ 0 5 * * * source $HOME/<env-file> && /Users/aaron/Documents/erlang/dta/_build/default/bin/scrape
 
 #### Cron workflow
 
@@ -60,6 +52,9 @@ Config:
 Commands:
 - https://www.rebar3.org/docs/commands#escriptize
 
+Crontab reference:
+- https://crontab.guru/
+
 ### Cron
 
 Scenic walk through cron
@@ -67,4 +62,3 @@ Scenic walk through cron
 
 How to run for multiple days
 - https://stackoverflow.com/a/1382638/1913888
-

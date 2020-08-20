@@ -51,7 +51,7 @@ work_failed({Pid, Url}) ->
 %%%===================================================================
 
 init([]) ->
-  {ok, #{}}.
+  {ok, #{pids => []}}.
 
 handle_call({send_work, BikeMod}, _From, State) ->
   ?LOG({self(), send_work, BikeMod}),

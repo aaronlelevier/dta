@@ -8,7 +8,8 @@
     web,
     dta,
     util,
-    gen_smtp
+    gen_smtp,
+    mochiweb
    ]},
   {env,[]},
   {modules, []},

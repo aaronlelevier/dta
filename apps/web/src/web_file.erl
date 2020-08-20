@@ -12,6 +12,7 @@
   file_read/1, file_write/2, file_delete/1,
   product_map/1, product_map/2, file_write_product_map/2, brand_date_dirnames/1]).
 -include_lib("web/include/records.hrl").
+-include_lib("dta/include/macros.hrl").
 
 -spec filename(#request{}) -> string().
 filename(Req = #request{}) ->
@@ -32,11 +33,19 @@ filename(Req = #request{}, Opts) ->
 %% @doc Returns the abs path to the dated dirname based on the 'Req'
 -spec dirname(#request{}) -> string().
 dirname(Req = #request{}) ->
-  filename:join([
-    code:priv_dir(web),
+  PrivDir = filename:join(
+    os:getenv("HOME"),
+    "Documents/erlang/dta/apps/web/priv"
+  ),
+  ?LOG({privdir, PrivDir}),
+  D = filename:join([
+    % because 'escript' path for 'code:priv_dir(web)' is different
+    PrivDir, % code:priv_dir(web),
     Req#request.brand,
     Req#request.dt
-  ]).
+  ]),
+  ?LOG({dirname, D}),
+  D.
 
 %% @doc Returns the abs path to the brand dirname based on the 'Req'
 -spec brand_dirname(#request{}) -> string().

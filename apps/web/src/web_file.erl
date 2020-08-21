@@ -33,25 +33,24 @@ filename(Req = #request{}, Opts) ->
 %% @doc Returns the abs path to the dated dirname based on the 'Req'
 -spec dirname(#request{}) -> string().
 dirname(Req = #request{}) ->
-  PrivDir = filename:join(
-    os:getenv("HOME"),
-    "Documents/erlang/dta/apps/web/priv"
-  ),
-  ?LOG({privdir, PrivDir}),
-  D = filename:join([
-    % because 'escript' path for 'code:priv_dir(web)' is different
-    PrivDir, % code:priv_dir(web),
+  filename:join([
+    priv_dir(),
     Req#request.brand,
     Req#request.dt
-  ]),
-  ?LOG({dirname, D}),
-  D.
+  ]).
+
+% because 'escript' path for 'code:priv_dir(web)' is different
+priv_dir() ->
+  filename:join(
+    os:getenv("HOME"),
+    "Documents/erlang/dta/apps/web/priv"
+  ).
 
 %% @doc Returns the abs path to the brand dirname based on the 'Req'
 -spec brand_dirname(#request{}) -> string().
 brand_dirname(Req = #request{}) ->
   filename:join([
-    code:priv_dir(web),
+    priv_dir(),
     Req#request.brand
   ]).
 

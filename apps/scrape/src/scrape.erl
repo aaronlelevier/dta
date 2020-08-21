@@ -27,6 +27,8 @@ main(Args) ->
   % TODO: hardcoded 'BikeMod' until other bike mods are supported
   ok = web_reporter:send_work(chromag),
 
+  ok = email:send_email("Chromag Inventory", web_table:html(chromag)),
+
   erlang:halt(0),
   ok.
 

@@ -21,10 +21,20 @@ send_email(Subject, Message) ->
   ?LOG({from_email, FromEmail}),
   ?LOG({to_email, ToEmail}),
   ?LOG({pw_loaded, is_list(Pw)}),
-  Bin = gen_smtp_client:send_blocking({FromEmail, [ToEmail],
-    util:str_format(
-      "Subject: ~s\r\nFrom: DTA Test\r\nTo: ~p\r\n\r\n~s",
-      [Subject, FromEmail, Message])},
+
+  Email = {<<"text">>, <<"html">>, [
+    {<<"From">>, list_to_binary(FromEmail)},
+    {<<"To">>, list_to_binary(ToEmail)},
+    {<<"Subject">>, list_to_binary(Subject)}],
+    #{content_type_params => [
+      {<<"charset">>, <<"US-ASCII">>}],
+      disposition => <<"inline">>
+    },
+    list_to_binary(Message)},
+  Encoded = mimemail:encode(Email),
+
+  Bin = gen_smtp_client:send_blocking(
+    {FromEmail, [ToEmail], Encoded},
     [
       {relay, "smtp.gmail.com"},
       {username, FromEmail},
@@ -33,6 +43,7 @@ send_email(Subject, Message) ->
       {ssl, true}
     ]
   ),
+
   % will fail (and should fail) here on a pattern match if email
   % send fails
   {ok, email_sent} = assert_sent(Bin),

@@ -10,6 +10,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("web/include/records.hrl").
+-include_lib("dta/include/macros.hrl").
 -import(stringutil, [format/2]).
 -export([html/1]).
 
@@ -24,6 +25,7 @@
 html(BikeMod) ->
   format(
     "<html>
+    <h1>~s inventory changes</h1>
     <head>
       <style>
         table,
@@ -39,17 +41,22 @@ html(BikeMod) ->
     </head>
     <body>~s</body>
     </html>
-    ", [tables(BikeMod)]).
+    ", [BikeMod, tables(BikeMod)]).
 
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
 
 tables(BikeMod) ->
-  string:join([table(web:create_request(Url)) || Url <- BikeMod:urls()], "<br>").
+  Reqs = [web:create_request(Url) || Url <- BikeMod:urls()],
+  string:join([table(Req) || Req <- Reqs, table(Req) =/= []], "<br>").
 
 table(Req = #request{}) ->
-  format("<table>~s~s</table>", [thead(), tbody(Req)]).
+  Body = tbody(Req),
+  if
+    Body == [] -> "";
+    true -> format("<table>~s~s</table>", [thead(), Body])
+  end.
 
 thead() ->
   Ths = string:join([format("<th>~s</th>", [X]) || X <- record_info(fields, variant_inventory_diff)], ""),
@@ -57,19 +64,23 @@ thead() ->
 
 tbody(Req = #request{}) ->
   Diffs = chromag_variant_inventory:diffs(Req),
-  format("<tbody>~s</tbody>", [tds(Diffs)]).
+  Rows = tds(Diffs),
+  if
+    Rows == [] -> "";
+    true -> format("<tbody>~s</tbody>", [Rows])
+  end.
 
 tds(Diffs) ->
   string:join(
-    [format("<tr>~s</tr>", [td(Diff)]) || Diff <- Diffs], ""
+    [format("<tr>~s</tr>", [td(Diff)]) || Diff <- Diffs,
+      Diff#variant_inventory_diff.quantity /= Diff#variant_inventory_diff.prev_quantity], ""
   ).
 
 td(Diff) ->
-  % we don't want the first field which is the record identifier
   string:join([format("<td>~s</td>", [
     if is_integer(X) =:= true -> integer_to_list(X);
       true -> X
     end
   ]) || X <- tuple_to_list(Diff),
-    X /= variant_inventory_diff,
-    Diff#variant_inventory_diff.quantity /= Diff#variant_inventory_diff.prev_quantity], "").
+    % we don't want the first field which is the record identifier
+    X /= variant_inventory_diff], "").

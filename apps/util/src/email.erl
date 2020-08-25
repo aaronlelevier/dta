@@ -15,9 +15,9 @@
 %% success is asserted, and will raise exception of email send fails
 -spec send_email(Subject :: string(), Message :: string()) -> ok.
 send_email(Subject, Message) ->
-  FromEmail = os:getenv("DTA_TEST_EMAIL_USERNAME"),
-  ToEmail = os:getenv("DTA_TEST_TO_EMAIL_USERNAME"),
-  Pw = os:getenv("DTA_TEST_EMAIL_PW"),
+  FromEmail = os:getenv("DTA_FROM_EMAIL_USERNAME"),
+  Pw = os:getenv("DTA_FROM_EMAIL_PW"),
+  ToEmail = os:getenv("DTA_TO_EMAIL_USERNAME"),
   ?LOG({from_email, FromEmail}),
   ?LOG({to_email, ToEmail}),
   ?LOG({pw_loaded, is_list(Pw)}),
@@ -55,9 +55,9 @@ assert_sent(Bin) ->
   IsSuccess = string:slice(Bin, Start, Length) =:= <<"2.0.0">>,
   if
     IsSuccess == true ->
-      ?LOG({success, email_sent, os:getenv("DTA_TEST_TO_EMAIL_USERNAME")}),
+      ?LOG({success, email_sent, os:getenv("DTA_TO_EMAIL_USERNAME")}),
       {ok, email_sent};
     true ->
-      ?LOG({fail, email_not_sent, os:getenv("DTA_TEST_TO_EMAIL_USERNAME")}),
+      ?LOG({fail, email_not_sent, os:getenv("DTA_TO_EMAIL_USERNAME")}),
       {error, email_not_sent}
   end.

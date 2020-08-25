@@ -1,23 +1,6 @@
 # scrape
 
-An escript to run via cron that runs the webscraper in the `web` app
-
-## Build
-
-Run this command from the project home
-    
-    $ cd ../dta
-    $ rebar3 escriptize
-    
-Any escript specific rebar3 config needs to live in the project home dir `rebar.config`
-
-If there's a dependency that the escript needs, it should be added in the applications section of `<app>.app.src` file.
-
-## Run
-
-Syntax is:
-
-    $ _build/default/bin/scrape
+Here's some additional notes no cron and escript's from what's in the project README.
 
 ### Run with Cron
 

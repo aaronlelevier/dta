@@ -10,7 +10,8 @@
 -vsn(1.0).
 -export([show_exports/1]).
 
-%% @doc helper for outputting all functions to export
+%% @doc helper for outputting all exportable functions
+%% this is useful if starting out with: -compile(export_all)
 %% example call:
 %% $ moduleutil:show_exports(foo).
 %% $ -export([foo/1])
@@ -24,5 +25,3 @@ show_exports(Mod) ->
   io:format(
     "-export([~s]).~n", [string:join(Exports, ", ")]
   ).
-
-

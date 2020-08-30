@@ -65,8 +65,8 @@ handle_call(wait_for_complete, _From, State) ->
 handle_call(_Request, _From, State) ->
   {reply, ok, State}.
 
-handle_cast({work_done, {Pid, Url}}, State) ->
-  ?LOG({self(), work_done, Pid, Url, {state, State}}),
+handle_cast({Action, {Pid, Url}}, State) when Action == work_done orelse Action == work_failed ->
+  ?LOG({self(), Action, Pid, Url, {state, State}}),
   % reporter tells the worker to exit once their work is done
   exit(Pid, shutdown),
   % reporter state updated to remove worker Pid now that they are finished

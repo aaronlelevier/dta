@@ -20,7 +20,7 @@ filename_test() ->
   Req = req(),
   ?assertEqual(
     filename:join([
-      code:priv_dir(web), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.html"]),
+      web_file:priv_dir(), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.html"]),
     web_file:filename(Req)
   ).
 
@@ -28,7 +28,7 @@ filename_empty_opts_defaults_to_html_test() ->
   Req = req(),
   ?assertEqual(
     filename:join([
-      code:priv_dir(web), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.html"]),
+      web_file:priv_dir(), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.html"]),
     web_file:filename(Req, [])
   ).
 
@@ -37,14 +37,14 @@ filename_opts_extension_is_json_test() ->
   Req = req(),
   ?assertEqual(
     filename:join([
-      code:priv_dir(web), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.json"]),
+      web_file:priv_dir(), "raawmtb", "2020-07-19", "madonna-v2-frame-kit.json"]),
     web_file:filename(Req, [{extension, "json"}])
   ).
 
 dirname_test() ->
   Req = req(),
   ?assertEqual(
-    filename:join([code:priv_dir(web), "raawmtb", "2020-07-19"]),
+    filename:join([web_file:priv_dir(), "raawmtb", "2020-07-19"]),
     web_file:dirname(Req)
   ).
 

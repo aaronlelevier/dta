@@ -22,4 +22,6 @@ inventory_diff_test() ->
 
   [{Id, InventoryDiff} | _] = maps:to_list(Ret),
   ?assertEqual(31742775230596, Id),
-  ?assertEqual({inventory_diff, 31742775230596, -3, -3}, InventoryDiff).
+  ?assertEqual(
+    {inventory_diff,31742775230596,-4,-4},
+    InventoryDiff).

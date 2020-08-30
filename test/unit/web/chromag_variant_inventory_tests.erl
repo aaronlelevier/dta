@@ -17,6 +17,6 @@ diffs_test() ->
   [H|_] = Ret,
   ?assertEqual(
     {variant_inventory_diff,31742775230596,"chromagbikes",
-      "stylus-2020","S (Frame Only)","BLACK FIRE",70900,-3,-3},
+      "stylus-2020","S (Frame Only)","BLACK FIRE",70900,-4,-4},
     H
   ).

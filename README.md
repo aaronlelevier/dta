@@ -4,7 +4,11 @@ dta stands for "data to api".
 
 ## Summary
 
-This project does web scraping to gather product info, checks for what changed, and then sends an email off the changes in product info.
+This project web scrapes mountain bike product info, checks for what changed, and then sends an email. 
+
+The code currently only works for [Chromag Bikes](https://chromagbikes.com/), but more bike sites are planned in the future.
+
+This is an exploratory project, meant for the purpose of learning how to build a stable in Erlang. 
 
 ## Details
 
@@ -28,23 +32,37 @@ These 3 environment variables must be set and are used for the email functionali
 
 ## Build
 
-To build, run this command from the project home
+To build project:
+```
+$ rebar3 release
+```
 
+To build escript:
 ```
 $ rebar3 escriptize
 ```
 
 ## Run
 
-To run the escript and call the code end-to-end, run:
+To run the escript end-to-end:
 
 ```
 $ _build/default/bin/scrape
 ```
 
-# Example Email
+## Testing
+
+Run unit tests:
+```
+$ rebar3 eunit
+```
+
+## Example Email
 
 Here's an example email of what to expect. Only bikes that changed quantity from day to day will show.
 
-
 ![Imgur](https://i.imgur.com/iOXMpsg.png)
+
+# License
+
+Apache 2.0

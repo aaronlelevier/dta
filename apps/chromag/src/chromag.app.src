@@ -1,19 +1,14 @@
-{application, scrape,
- [{description, "An escript"},
+{application, chromag,
+ [{description, "An OTP library"},
   {vsn, "0.1.0"},
   {registered, []},
   {applications,
    [kernel,
-    stdlib,
-    web,
-    dta,
-    chromag,
-    util,
-    gen_smtp,
-    mochiweb
+    stdlib
    ]},
   {env,[]},
   {modules, []},
+
   {licenses, ["Apache 2.0"]},
   {links, []}
  ]}.

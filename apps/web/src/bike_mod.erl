@@ -9,10 +9,10 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 
+%% TODO: figure out how to organize behavior modules
 
 %% @doc List of URLs
 -callback urls() -> [dta_types:url()].
-
 
 %% @doc Should return the HTML DOM target of the product map
 -callback product_map_target() -> {Key, Value} when

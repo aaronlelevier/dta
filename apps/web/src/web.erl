@@ -24,7 +24,6 @@ create_request(Url, Opts) ->
   web_request:create_request(
     Url, [{product_map_target, BikeMod:product_map_target()} | Opts]).
 
-
 %%%% @doc Fetches and saves a single bike/brand's product JSON and saves
 %%%% it to a file
 fetch_single(Url) when is_list(Url) ->

@@ -10,6 +10,7 @@
     chromag,
     util,
     gen_smtp,
+    jsx,
     mochiweb
    ]},
   {env,[]},

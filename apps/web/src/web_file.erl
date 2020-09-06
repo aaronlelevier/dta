@@ -57,7 +57,7 @@ brand_dirname(Req = #request{}) ->
 %% @doc Returns a list of date dirnames for a brand in DESC order
 -spec brand_date_dirnames(#request{}) -> [string()].
 brand_date_dirnames(Req = #request{}) ->
-  {ok, Filenames} = file:list_dir(web_file:brand_dirname(Req)),
+  {ok, Filenames} = file:list_dir(brand_dirname(Req)),
   lists:sort(fun(A,B) -> A > B end, Filenames).
 
 -spec file_write(#request{}, [byte()]) -> ok | {error, string()}.

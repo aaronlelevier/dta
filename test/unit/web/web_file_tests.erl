@@ -48,6 +48,27 @@ dirname_test() ->
     web_file:dirname(Req)
   ).
 
+priv_dir_test() ->
+  Ret = web_file:priv_dir(),
+  ?assertEqual(
+    stringutil:format("~s/Documents/erlang/dta/apps/web/priv", [os:getenv("HOME")]),
+    Ret
+  ).
+
+brand_dirname_test() ->
+  Req = req(),
+  Brand = "raawmtb",
+  ?assertEqual(Brand, element(4, Req)),
+
+  Ret = web_file:brand_dirname(Req),
+
+  ?assertEqual(
+    stringutil:format(
+      "~s/Documents/erlang/dta/apps/web/priv/~s",
+      [os:getenv("HOME"), Brand]),
+    Ret
+  ).
+
 product_map_test() ->
   Req = req(),
 

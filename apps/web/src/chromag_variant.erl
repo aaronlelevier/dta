@@ -28,7 +28,7 @@ variant(Req = #request{}, Map) ->
 
 %% @doc Returns a map where the Key is the variant_id and the value
 %% is a #variant{} record
--spec variant_map(#request{}) -> #{web_types:variant_id() => #variant{}}.
+-spec variant_map(#request{}) -> #{dta_types:variant_id() => #variant{}}.
 variant_map(Req = #request{}) ->
   BikeMaps = chromag_product_map:bike_maps(Req),
   maps:from_list([

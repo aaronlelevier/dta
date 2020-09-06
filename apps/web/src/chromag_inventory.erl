@@ -24,7 +24,7 @@ inventory(Req = #request{}, BikeMap) ->
   }.
 
 -spec inventory_diff(dta_types:url()) ->
-  #{web_types:variant_id() => #inventory_diff{}}.
+  #{dta_types:variant_id() => #inventory_diff{}}.
 inventory_diff(Req = #request{}) ->
   % get the last dirname dates for which we have data
   Url = Req#request.url,
@@ -44,7 +44,7 @@ inventory_diff(Req = #request{}) ->
 
 %% @doc Returns a Map where the Key is the variant_id and the value
 %% is a #inventory{} record
--spec variant_map(#request{}) -> #{web_types:variant_id() => #inventory{}}.
+-spec variant_map(#request{}) -> #{dta_types:variant_id() => #inventory{}}.
 variant_map(Req = #request{}) ->
   BikeMaps = chromag_product_map:bike_maps(Req),
   maps:from_list([
@@ -54,7 +54,7 @@ variant_map(Req = #request{}) ->
 
 %% @doc inventory counts NOT pre-filtered for changes in count
 -spec diff_variant_map(map(), map()) ->
-  #{web_types:variant_id() => #inventory_diff{}}.
+  #{dta_types:variant_id() => #inventory_diff{}}.
 diff_variant_map(CurMap, PrevMap) ->
   L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap)),
   maps:from_list([{Id, #inventory_diff{

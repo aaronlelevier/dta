@@ -23,7 +23,7 @@ inventory(Req = #request{}, BikeMap) ->
     quantity = maps:get(<<"inventory_quantity">>, BikeMap)
   }.
 
--spec inventory_diff(web_request:url()) ->
+-spec inventory_diff(dta_types:url()) ->
   #{web_types:variant_id() => #inventory_diff{}}.
 inventory_diff(Req = #request{}) ->
   % get the last dirname dates for which we have data

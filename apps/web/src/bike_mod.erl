@@ -11,7 +11,7 @@
 
 
 %% @doc List of URLs
--callback urls() -> [web_request:url()].
+-callback urls() -> [dta_types:url()].
 
 
 %% @doc Should return the HTML DOM target of the product map

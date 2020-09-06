@@ -13,14 +13,14 @@
 -define(USE_CACHE, true).
 
 %% @doc queries the home page and returns a list of all bike Urls we care about
--spec urls() -> [web_request:url()].
+-spec urls() -> [dta_types:url()].
 urls() ->
   case ?USE_CACHE of
     true -> cached_urls();
     false -> fetch_urls()
   end .
 
--spec fetch_urls() -> [web_request:url()].
+-spec fetch_urls() -> [dta_types:url()].
 fetch_urls() ->
   {ok, Body} = web:fetch_page("https://chromagbikes.com/"),
   Tree = mochiweb_html:parse(list_to_binary(Body)),
@@ -42,7 +42,7 @@ fetch_urls() ->
 
   format_urls(Urls).
 
--spec cached_urls() -> [web_request:url()].
+-spec cached_urls() -> [dta_types:url()].
 cached_urls() ->
   ["https://chromagbikes.com/collections/29-27/products/frames-arcturian",
     "https://chromagbikes.com/collections/29-27/products/frames-doctahawk",
@@ -75,7 +75,7 @@ extract_hrefs([H | T], Acc) ->
 
 %% @doc formats a list of Urls to be all deep links
 %% urls are initially a combination of deep links and relative links
--spec format_urls(Urls) -> [web_request:url()] when
+-spec format_urls(Urls) -> [dta_types:url()] when
   Urls :: [binary()].
 format_urls(Urls) ->
   format_urls(Urls, []).

@@ -1,6 +1,6 @@
 %% @doc request is a single request object to a URL on a specific date
 -record(request, {
-  url :: web_request:url(),
+  url :: dta_types:url(),
   dt :: dateutil:date_string(),
   brand :: atom(),
   bike :: string(),

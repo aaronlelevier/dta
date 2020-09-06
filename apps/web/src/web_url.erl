@@ -14,16 +14,16 @@
 %%% API
 %%%===================================================================
 
--spec brand(web_request:url()) -> string().
+-spec brand(dta_types:url()) -> string().
 brand(Url) ->
   regex_url(Url, <<"https://([a-zA-z0-9]+)">>).
 
--spec bike(web_request:url()) -> string().
+-spec bike(dta_types:url()) -> string().
 bike(Url) ->
   regex_url(Url, <<"/([a-zA-z0-9\-]+?)$">>).
 
 %% @doc Returns the bike_mod based on the Url
--spec bike_mod(Url :: web_request:url()) -> atom().
+-spec bike_mod(Url :: dta_types:url()) -> atom().
 bike_mod(Url) ->
   Brand = brand(Url),
   BrandMap = #{"chromagbikes" => chromag, "raawmtb" => raaw},

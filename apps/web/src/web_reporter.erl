@@ -85,7 +85,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
--spec start_worker(web_request:url()) -> pid().
+-spec start_worker(dta_types:url()) -> pid().
 start_worker(Url) ->
   {ok, Pid} = web_sup:start_worker(Url),
   Pid.

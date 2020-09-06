@@ -8,7 +8,7 @@
 -module(chromag_product_map).
 -author("Aaron Lelevier").
 -vsn(1.0).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 -export([bike_maps/1, bike_map/2, variants/1, inventories/1]).
 
 

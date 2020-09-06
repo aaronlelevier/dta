@@ -63,7 +63,6 @@ fetch_page_test() ->
   {ok, Bin} = web_file:file_read(Req),
   Expected = binary_to_list(Bin),
   % mock setup
-%%  ok = meck:new(httpc),
   ok = meck:expect(
     httpc,
     request,

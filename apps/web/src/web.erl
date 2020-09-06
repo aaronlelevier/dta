@@ -10,7 +10,7 @@
 -vsn(1.0).
 -export([create_request/1, create_request/2, fetch_page/1, fetch_single/1]).
 -include_lib("dta/include/macros.hrl").
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 
 %%%===================================================================
 %%% API

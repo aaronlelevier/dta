@@ -9,7 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([inventory/2, inventory_diff/1]).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 
 %%%===================================================================
 %%% API

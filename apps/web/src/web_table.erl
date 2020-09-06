@@ -9,7 +9,7 @@
 -module(web_table).
 -author("Aaron Lelevier").
 -vsn(1.0).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 -include_lib("dta/include/macros.hrl").
 -import(stringutil, [format/2]).
 -export([html/1]).

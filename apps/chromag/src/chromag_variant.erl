@@ -8,7 +8,7 @@
 -module(chromag_variant).
 -author("Aaron Lelevier").
 -vsn(1.0).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 -export([variant/2, variant_map/1]).
 
 %%%===================================================================

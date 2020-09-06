@@ -11,7 +11,7 @@
 -export([filename/1, filename/2, dirname/1, brand_dirname/1,
   file_read/1, file_write/2, file_delete/1, priv_dir/0,
   product_map/1, product_map/2, file_write_product_map/2, brand_date_dirnames/1]).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 -include_lib("dta/include/macros.hrl").
 
 -spec filename(#request{}) -> string().

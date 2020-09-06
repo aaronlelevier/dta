@@ -8,7 +8,7 @@
 -module(recordutil).
 -author("Aaron Lelevier").
 -vsn(1.0).
--include_lib("web/include/records.hrl").
+-include_lib("dta/include/records.hrl").
 -export([record_to_proplist/1, proplist_to_record/2]).
 
 %% @doc Converts a record to a proplist

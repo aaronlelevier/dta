@@ -1,3 +1,12 @@
+%%%-------------------------------------------------------------------
+%%% @author Aaron Lelevier
+%%% @doc
+%%%
+%%% @end
+%%% Created : 06. Sep 2020 10:46 AM
+%%%-------------------------------------------------------------------
+-author("Aaron Lelevier").
+
 %% @doc request is a single request object to a URL on a specific date
 -record(request, {
   url :: dta_types:url(),

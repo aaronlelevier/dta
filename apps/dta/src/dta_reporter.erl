@@ -4,7 +4,7 @@
 %%% them know they can exit when their work is done
 %%% @end
 %%%-------------------------------------------------------------------
--module(web_reporter).
+-module(dta_reporter).
 -behaviour(gen_server).
 
 -include_lib("dta/include/macros.hrl").
@@ -27,7 +27,7 @@
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-%% @doc start all web_worker's for the BikeMod and wait until complete
+%% @doc start all dta_worker's for the BikeMod and wait until complete
 -spec send_work(BikeMod) -> ok when
   BikeMod :: chromag | raaw.
 send_work(BikeMod) ->
@@ -87,7 +87,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 -spec start_worker(dta_types:url()) -> pid().
 start_worker(Url) ->
-  {ok, Pid} = web_sup:start_worker(Url),
+  {ok, Pid} = dta_sup:start_worker(Url),
   Pid.
 
 -spec start_workers(Module) -> [pid()] when

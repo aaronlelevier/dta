@@ -1,7 +1,7 @@
 {application, dta,
  [{description, "An OTP application"},
   {vsn, "0.1.0"},
-  {registered, []},
+  {registered, [dta_reporter]},
   {mod, {dta_app, []}},
   {applications,
    [kernel,

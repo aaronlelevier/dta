@@ -7,7 +7,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/0]).
+-export([start_link/0, start_worker/1]).
 
 -export([init/1]).
 
@@ -26,10 +26,27 @@ start_link() ->
 %%                  type => worker(),       % optional
 %%                  modules => modules()}   % optional
 init([]) ->
-    SupFlags = #{strategy => one_for_all,
-                 intensity => 0,
-                 period => 1},
-    ChildSpecs = [],
-    {ok, {SupFlags, ChildSpecs}}.
+  SupFlags = #{strategy => one_for_one,
+    intensity => 10,
+    period => 1},
 
-%% internal functions
+  ChildSpecs = [#{
+    id => dta_reporter,
+    start => {dta_reporter, start_link, []},
+    restart => permanent,
+    shutdown => 2000,
+    type => worker,
+    modules => [dta_reporter, gen_server]
+  }],
+
+  {ok, {SupFlags, ChildSpecs}}.
+
+start_worker(Url) ->
+  supervisor:start_child(?SERVER, #{
+    id => Url,
+    start => {dta_worker, start_link, [Url]},
+    restart => temporary,
+    shutdown => 2000,
+    type => worker,
+    modules => [dta_worker, gen_server]
+  }).

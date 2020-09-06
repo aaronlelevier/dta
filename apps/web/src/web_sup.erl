@@ -9,7 +9,7 @@
 
 -behaviour(supervisor).
 
--export([start_link/0, start_worker/1]).
+-export([start_link/0]).
 
 -export([init/1]).
 
@@ -32,25 +32,6 @@ init([]) ->
     intensity => 10,
     period => 1},
 
-  ChildSpecs = [#{
-    id => web_reporter,
-    start => {web_reporter, start_link, []},
-    restart => permanent,
-    shutdown => 2000,
-    type => worker,
-    modules => [web_reporter, gen_server]
-  }],
-
-  {ok, {SupFlags, ChildSpecs}}.
-
-start_worker(Url) ->
-  supervisor:start_child(?SERVER, #{
-    id => Url,
-    start => {web_worker, start_link, [Url]},
-    restart => temporary,
-    shutdown => 2000,
-    type => worker,
-    modules => [web_worker, gen_server]
-  }).
+  {ok, {SupFlags, []}}.
 
 %% internal functions

@@ -5,7 +5,7 @@
 %%% There should be multiple workers so work can get done in parallel
 %%% @end
 %%%-------------------------------------------------------------------
--module(web_worker).
+-module(dta_worker).
 -behaviour(gen_server).
 
 -include_lib("dta/include/macros.hrl").
@@ -46,7 +46,7 @@ handle_cast({send_report, Url}, State) ->
   % fetch the web page and store results
   ok = web:fetch_single(Url),
   % notify reporter our work is done
-  web_reporter:work_done({self(), Url}),
+  dta_reporter:work_done({self(), Url}),
   {noreply, State}.
 
 handle_info(_Info, State) ->
@@ -54,7 +54,7 @@ handle_info(_Info, State) ->
 
 terminate(Reason, State) ->
   ?LOG({Reason, State}),
-  web_reporter:work_failed({self(), State}),
+  dta_reporter:work_failed({self(), State}),
   ok.
 
 code_change(_OldVsn, State, _Extra) ->

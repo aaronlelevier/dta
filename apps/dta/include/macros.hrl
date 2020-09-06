@@ -8,3 +8,5 @@
 -author("Aaron Lelevier").
 
 -define(LOG, fun(X) -> io:format("Mod:~p Line:~p ~p~n", [?MODULE, ?LINE, X]) end).
+
+-define(BRAND_MAP, #{"chromagbikes" => chromag, "raawmtb" => raaw}).

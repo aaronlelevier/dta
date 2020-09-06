@@ -8,10 +8,15 @@
 -module(web_request).
 -author("Aaron Lelevier").
 -vsn(1.0).
+-export([create_request/1, create_request/2, bike_mod/1]).
 -include_lib("dta/include/records.hrl").
--export([create_request/1, create_request/2]).
+-include_lib("dta/include/macros.hrl").
 
-%% Functions
+%%%===================================================================
+%%% API
+%%%===================================================================
+
+%% Constructors
 
 -spec create_request(dta_types:url()) -> #request{}.
 create_request(Url) ->
@@ -21,13 +26,25 @@ create_request(Url) ->
 -spec create_request(dta_types:url(), Opts) -> #request{} when
   Opts :: [{dt, dta_types:dt()}].
 create_request(Url, Opts) ->
+  Brand = web_url:brand(Url),
+  BikeMod = bike_mod(Brand),
   #request{
     url = Url,
     % optional arguments
     dt = proplists:get_value(dt, Opts, dateutil:date_str()),
     % computed properties
-    brand = web_url:brand(Url),
+    brand = Brand,
     bike = web_url:bike(Url),
-    product_map_target = proplists:get_value(product_map_target, Opts)
+    product_map_target = BikeMod:product_map_target()
   }.
 
+%% Eliminators
+
+bike_mod(Req = #request{}) ->
+  maps:get(Req#request.brand, ?BRAND_MAP);
+bike_mod(Brand) when is_list(Brand) ->
+  maps:get(Brand, ?BRAND_MAP).
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================

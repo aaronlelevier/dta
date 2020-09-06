@@ -9,6 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -export([brand/1, bike/1, bike_mod/1]).
+-include_lib("dta/include/macros.hrl").
 
 %%%===================================================================
 %%% API
@@ -26,8 +27,7 @@ bike(Url) ->
 -spec bike_mod(Url :: dta_types:url()) -> atom().
 bike_mod(Url) ->
   Brand = brand(Url),
-  BrandMap = #{"chromagbikes" => chromag, "raawmtb" => raaw},
-  maps:get(Brand, BrandMap).
+  maps:get(Brand, ?BRAND_MAP).
 
 %%%===================================================================
 %%% Internal functions

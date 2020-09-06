@@ -63,6 +63,7 @@ thead() ->
   format("<thead><tr>~s<t/tr></thead>", [Ths]).
 
 tbody(Req = #request{}) ->
+  %% TODO: this will need to be a 'BikeMod' behavior
   Diffs = chromag_variant_inventory:diffs(Req),
   Rows = tds(Diffs),
   if

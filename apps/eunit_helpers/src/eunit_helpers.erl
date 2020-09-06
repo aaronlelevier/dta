@@ -19,6 +19,7 @@ url() ->
 raaw_url() ->
   raaw_urls:madonna_v2_frame_kit().
 
+%% TODO: might want to change name to 'chromag_req'
 -spec req() -> #request{}.
 req() ->
   web:create_request(url(), [{dt, dateutil:date_str(2020, 8, 8)}]).

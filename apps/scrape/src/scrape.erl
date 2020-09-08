@@ -15,19 +15,23 @@
 %% API functions
 %%====================================================================
 
-%% escript Entry point
+%% Should be called with a single positional argument, which is the BikeMod
+%% ex: chromag
 -spec main([string()]) -> ok.
 main(Args) ->
   io:format("Version: ~p~n", [init:script_id()]),
   io:format("Args: ~p~n", [Args]),
 
+  [H|_] = Args,
+  BikeMod = list_to_atom(H),
+
   % start applications
   ok = start(),
 
-  % TODO: hardcoded 'BikeMod' until other bike mods are supported
-  ok = dta_reporter:send_work(chromag),
-
-  ok = email:send_email("Chromag Inventory", web_table:html(chromag)),
+  ok = dta_reporter:send_work(BikeMod),
+  ok = email:send_email(
+    stringutil:format("~s inventory", [BikeMod]),
+    web_table:html(BikeMod)),
 
   erlang:halt(0),
   ok.

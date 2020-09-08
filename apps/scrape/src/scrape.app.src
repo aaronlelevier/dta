@@ -1,20 +1,26 @@
 {application, scrape,
- [{description, "An escript"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {applications,
-   [kernel,
-    stdlib,
-    web,
-    dta,
-    chromag,
-    util,
-    gen_smtp,
-    jsx,
-    mochiweb
-   ]},
-  {env,[]},
-  {modules, []},
-  {licenses, ["Apache 2.0"]},
-  {links, []}
- ]}.
+  [{description, "An escript"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications,
+      [
+        % OTP apps
+        kernel,
+        stdlib,
+        % 3rd party apps
+        gen_smtp,
+        jsx,
+        mochiweb,
+        % my apps
+        util,
+        web,
+        dta,
+        chromag,
+        raaw
+      ]
+    },
+    {env, []},
+    {modules, []},
+    {licenses, ["Apache 2.0"]},
+    {links, []}
+  ]}.

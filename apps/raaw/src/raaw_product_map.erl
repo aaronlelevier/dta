@@ -1,16 +1,20 @@
 %%%-------------------------------------------------------------------
 %%% @author Aaron Lelevier
-%%% @doc Creates 'variant' and 'inventory' records from the product map
-%%%
+%%% @doc Eliminators for the 'raaw' ProductMap
+%%
 %%% @end
-%%% Created : 08. Aug 2020 8:17 AM
+%%% Created : 08. Sep 2020 8:11 AM
 %%%-------------------------------------------------------------------
--module(chromag_product_map).
+-module(raaw_product_map).
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("dta/include/records.hrl").
 -export([bike_maps/1, bike_map/2, variants/1, inventories/1]).
 
+
+%%%===================================================================
+%%% API
+%%%===================================================================
 
 %% @doc combined bike maps for all versions of a single type brand/bike
 -spec bike_maps(#request{}) -> [map()].
@@ -29,9 +33,25 @@ bike_map(Hv, Inventories) ->
 
 -spec variants(map()) -> [map()].
 variants(Map) ->
-  maps:get(<<"variants">>, maps:get(<<"product">>, Map)).
+  maps:get(<<"variants">>, Map).
 
 -spec inventories(map()) -> #{VariantId => map()} when
   VariantId :: binary().
 inventories(Map) ->
-  maps:get(<<"inventories">>, Map).
+  maps:from_list([{
+    integer_to_binary(maps:get(<<"id">>, V)),
+    #{
+      <<"inventory_quantity">> =>
+      bool_to_int(maps:get(<<"available">>, V))
+    }
+  } || V <- variants(Map)]).
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
+bool_to_int(B) ->
+  case B of
+    true -> 1;
+    false -> 0
+  end.

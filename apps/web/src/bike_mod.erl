@@ -8,6 +8,7 @@
 -module(bike_mod).
 -author("Aaron Lelevier").
 -vsn(1.0).
+-include_lib("dta/include/records.hrl").
 
 %% TODO: figure out how to organize behavior modules
 
@@ -21,3 +22,4 @@
   % HTML DOM value, ex: <<"product-id-1">>
   Value :: binary().
 
+-callback variant_inventory_diffs(#request{}) -> [#variant_inventory_diff{}].

@@ -8,11 +8,12 @@
 -module(raaw_inventory).
 -author("Aaron Lelevier").
 -vsn(1.0).
--export([inventory/2, inventory_diff/1]).
 -include_lib("dta/include/records.hrl").
 -include_lib("dta/include/macros.hrl").
-
--compile(export_all).
+-export([inventory/2, inventory_diff/1,
+  variant_map/1, diff_variant_map/2,
+  combine_for_prev_variant_map/2, default_missing/3,
+  prev_date/1]).
 
 %%%===================================================================
 %%% API
@@ -59,45 +60,32 @@ variant_map(Req = #request{}) ->
 -spec diff_variant_map(map(), map()) ->
   #{dta_types:variant_id() => #inventory_diff{}}.
 diff_variant_map(CurMap, PrevMap) ->
-  %% TODO: assumes the maps are of the same size with the same keys
-  %% TODO: i.e. the variant_id's haven't changed
-  L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap)),
+  PrevMap2 = combine_for_prev_variant_map(CurMap, PrevMap),
+  L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap2)),
   maps:from_list([{Id, #inventory_diff{
     variant_id = Id,
     quantity = Cur#inventory.quantity,
     prev_quantity = Prev#inventory.quantity}} ||
     {{Id, Cur}, {Id, Prev}} <- L]).
 
-%% TODO: should move to shared map-inventory util
-combine_variant_map(CurMap, PrevMap) ->
+combine_for_prev_variant_map(CurMap, PrevMap) ->
   Cur = sets:from_list(maps:keys(CurMap)),
   Prev = sets:from_list(maps:keys(PrevMap)),
-  Union = sets:union(Cur, Prev),
-  Missing = sets:subtract(Cur, Prev),
-
+  Missing = sets:to_list(sets:subtract(Cur, Prev)),
   % for all non-present VariantIds, default Prev
   % day inventory and zip (Missing)
-  L = default_missing(sets:to_list(Missing), CurMap, []),
-
-  % for those present in both, just zip (Union)
-  L2 = present_in_both(Union, Cur, Prev),
-
-  lists:join(L, L2).
+  MissingMap = default_missing(Missing, CurMap, #{}),
+  ?LOG({prev_map, PrevMap}),
+  ?LOG({missing_map, MissingMap}),
+  maps:merge(PrevMap, MissingMap).
 
 %% @doc Defaults current inventory that was missing the previous day
 %% to have a previous day inventory count of CurrentInventory - 1
 -spec default_missing([integer()], map(), []) -> list().
-default_missing([], Cur, Acc) ->
-  A = [{X,Y} ||
-    {X,Y} <- maps:to_list(Cur),
-    lists:member(X, [J || {J,_} <- Acc]) == true],
-  B = lists:reverse(Acc),
-  ?LOG(A),
-  ?LOG(B),
-  lists:zip(A, B);
+default_missing([], _Cur, Acc) -> Acc;
 default_missing([H | T], Cur, Acc) ->
   Inven = maps:get(H, Cur),
-  Map = {H,
+  Map = #{H =>
   #inventory{
     variant_id = Inven#inventory.variant_id,
     dt = prev_date(Inven#inventory.dt),
@@ -105,10 +93,10 @@ default_missing([H | T], Cur, Acc) ->
     }
   },
   ?LOG(Map),
-  default_missing(T, Cur, [Map|Acc]).
+  default_missing(T, Cur, maps:merge(Acc, Map)).
 
-%% TODO: impl next
-present_in_both(Union, Cur, Prev) -> 0.
-
-%% TODO: need to date math of -1 on "X"
-prev_date(_X) -> "2020-09-08".
+%% defaults the date string from: "2020-07-19" to "2020-07-00"
+%% just so it can be counted as different from the current data
+%% by zeroing out the day
+prev_date(DateStr) ->
+  string:join([string:slice(DateStr, 0, 8), "00"], "").

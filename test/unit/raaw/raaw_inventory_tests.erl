@@ -37,41 +37,63 @@ inventory_test() ->
     {inventory, 31683517972583, "2020-07-19", 0},
     Ret).
 
-%%diff_variant_map_test() ->
-%%  CurMap = #{
-%%    1 => #inventory{quantity = 0},
-%%    2 => #inventory{quantity = 0}
-%%  },
-%%  PrevMap = #{
-%%    2 => #inventory{quantity = 1},
-%%    3 => #inventory{quantity = 0}
-%%  },
-%%
-%%  Ret = raaw_inventory:combine_variant_map(CurMap, PrevMap),
-%%
-%%  ?assertEqual(
-%%    [
-%%      {{1, {inventory, 0}}, {1, {inventory, -1}}},
-%%      {{2, {inventory, 0}}, {2, {inventory, 1}}}
-%%    ],
-%%    Ret
-%%  ).
-
-default_missing_test() ->
-  Missing = [2],
-  Cur = #{
-    1 => #inventory{variant_id = 1, dt = "2020-09-09", quantity = 0},
-    2 => #inventory{variant_id = 2, dt = "2020-09-09", quantity = 0}
+diff_variant_map_test() ->
+  PrevDate = "2020-09-08",
+  CurDate = "2020-09-09",
+  PrevMap = #{
+    1 => #inventory{variant_id = 1, dt = PrevDate, quantity = 3}
+  },
+  CurMap = #{
+    1 => #inventory{variant_id = 1, dt = CurDate, quantity = 4},
+    2 => #inventory{variant_id = 2, dt = CurDate, quantity = 2}
   },
 
-  Ret = raaw_inventory:default_missing(Missing, Cur, []),
+  Ret = raaw_inventory:diff_variant_map(CurMap, PrevMap),
 
   ?assertEqual(
-    [
-      {
-        {2, {inventory, 2, "2020-09-09", 0}},
-        {2, {inventory, 2, "2020-09-08", -1}}
-      }
-    ],
+    #{1 => {inventory_diff,1,4,3},
+      2 => {inventory_diff,2,2,1}},
     Ret
   ).
+
+combine_variant_map_test() ->
+  PrevDate = "2020-09-08",
+  CurDate = "2020-09-09",
+  PrevMap = #{
+    1 => #inventory{variant_id = 1, dt = PrevDate, quantity = 3}
+  },
+  CurMap = #{
+    1 => #inventory{variant_id = 1, dt = CurDate, quantity = 4},
+    2 => #inventory{variant_id = 2, dt = CurDate, quantity = 2}
+  },
+
+  Ret = raaw_inventory:combine_for_prev_variant_map(
+    CurMap, PrevMap),
+
+  ?assertEqual(
+    #{
+      1 => #inventory{variant_id = 1, dt = "2020-09-08", quantity = 3},
+      2 => #inventory{variant_id = 2, dt = "2020-09-00", quantity = 1}
+    },
+    Ret
+  ).
+
+default_missing_test() ->
+  Missing = [1],
+  CurDate = "2020-09-09",
+  Cur = #{
+    1 => #inventory{variant_id = 1, dt = CurDate, quantity = 0},
+    2 => #inventory{variant_id = 2, dt = CurDate, quantity = 0}
+  },
+
+  Ret = raaw_inventory:default_missing(Missing, Cur, #{}),
+
+  ?assertEqual(
+    #{1 => {inventory, 1, raaw_inventory:prev_date(CurDate), -1}},
+    Ret
+  ).
+
+prev_date_test() ->
+  S = "2020-09-09",
+  Ret = raaw_inventory:prev_date(S),
+  ?assertEqual("2020-09-00", Ret).

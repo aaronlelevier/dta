@@ -71,7 +71,8 @@ thead() ->
 
 tbody(Req = #request{}) ->
   %% TODO: this will need to be a 'BikeMod' behavior
-  Diffs = chromag_variant_inventory:diffs(Req),
+  BikeMod = web_request:bike_mod(Req),
+  Diffs = BikeMod:variant_inventory_diffs(Req),
   Rows = tds(Diffs),
   if
     Rows == [] -> "";

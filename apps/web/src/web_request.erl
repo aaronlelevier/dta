@@ -40,6 +40,7 @@ create_request(Url, Opts) ->
 
 %% Eliminators
 
+-spec bike_mod(#request{} | string()) -> atom().
 bike_mod(Req = #request{}) ->
   maps:get(Req#request.brand, ?BRAND_MAP);
 bike_mod(Brand) when is_list(Brand) ->

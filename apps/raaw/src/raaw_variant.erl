@@ -9,7 +9,7 @@
 -author("Aaron Lelevier").
 -vsn(1.0).
 -include_lib("dta/include/records.hrl").
--export([variant/2]).
+-export([variant/2, variant_map/1]).
 
 
 %%%===================================================================
@@ -27,15 +27,15 @@ variant(Req = #request{}, Map) ->
     price = price(Map)
   }.
 
-%%%% @doc Returns a map where the Key is the variant_id and the value
-%%%% is a #variant{} record
-%%-spec variant_map(#request{}) -> #{dta_types:variant_id() => #variant{}}.
-%%variant_map(Req = #request{}) ->
-%%  BikeMaps = chromag_product_map:bike_maps(Req),
-%%  maps:from_list([
-%%    {maps:get(<<"id">>, X), variant(Req, X)}
-%%    || X <- BikeMaps
-%%  ]).
+%% @doc Returns a map where the Key is the variant_id and the value
+%% is a #variant{} record
+-spec variant_map(#request{}) -> #{dta_types:variant_id() => #variant{}}.
+variant_map(Req = #request{}) ->
+  BikeMaps = raaw_product_map:bike_maps(Req),
+  maps:from_list([
+    {maps:get(<<"id">>, X), variant(Req, X)}
+    || X <- BikeMaps
+  ]).
 
 %%%===================================================================
 %%% Internal functions

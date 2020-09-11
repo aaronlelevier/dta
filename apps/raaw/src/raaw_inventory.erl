@@ -39,6 +39,8 @@ inventory_diff(Req = #request{}) ->
   % inventory maps by variant_id
   CurMap = variant_map(CurReq),
   PrevMap = variant_map(PrevReq),
+  ?LOG({cur_map, CurMap}),
+  ?LOG({prev_map, PrevMap}),
   % find diff
   diff_variant_map(CurMap, PrevMap).
 
@@ -60,8 +62,16 @@ variant_map(Req = #request{}) ->
 -spec diff_variant_map(map(), map()) ->
   #{dta_types:variant_id() => #inventory_diff{}}.
 diff_variant_map(CurMap, PrevMap) ->
+  CurMap2 = combine_for_prev_variant_map(PrevMap, CurMap),
   PrevMap2 = combine_for_prev_variant_map(CurMap, PrevMap),
-  L = lists:zip(maps:to_list(CurMap), maps:to_list(PrevMap2)),
+  ?LOG({diff_variant_map, pre_zip, maps:size(CurMap)}),
+  ?LOG({diff_variant_map, pre_zip, maps:size(CurMap2)}),
+  ?LOG({diff_variant_map, pre_zip, maps:size(PrevMap)}),
+  ?LOG({diff_variant_map, pre_zip, maps:size(PrevMap2)}),
+
+  L = lists:zip(maps:to_list(CurMap2), maps:to_list(PrevMap2)),
+  ?LOG({diff_variant_map, zipped, L}),
+
   maps:from_list([{Id, #inventory_diff{
     variant_id = Id,
     quantity = Cur#inventory.quantity,
@@ -89,7 +99,7 @@ default_missing([H | T], Cur, Acc) ->
   #inventory{
     variant_id = Inven#inventory.variant_id,
     dt = prev_date(Inven#inventory.dt),
-    quantity = Inven#inventory.quantity - 1
+    quantity = Inven#inventory.quantity + 1
     }
   },
   ?LOG(Map),

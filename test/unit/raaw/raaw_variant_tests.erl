@@ -38,3 +38,17 @@ variant_test() ->
       "Raw with matt clear coat", 192437
     },
     Ret).
+
+raaw_variant_test() ->
+  Req = eunit_helpers:raaw_req(),
+
+  Ret = raaw_variant:variant_map(Req),
+
+  ?assert(is_map(Ret)),
+  [H|_] = maps:to_list(Ret),
+  ?assertEqual(
+    {31683517972583,
+      {variant,31683517972583,"raawmtb","madonna-v2-frame-kit",
+        "Small","Raw with matt clear coat",192437}},
+    H
+  ).

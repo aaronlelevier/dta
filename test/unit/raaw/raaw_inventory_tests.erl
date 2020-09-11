@@ -37,6 +37,15 @@ inventory_test() ->
     {inventory, 31683517972583, "2020-07-19", 0},
     Ret).
 
+inventory_diff_test() ->
+  Url = eunit_helpers:raaw_url(),
+  Req = web:create_request(Url, [{dt, dateutil:date_str(2020, 9, 9)}]),
+
+  Ret = raaw_inventory:inventory_diff(Req),
+
+  ?assert(is_map(Ret)),
+  ?assert(maps:size(Ret) > 0).
+
 diff_variant_map_test() ->
   PrevDate = "2020-09-08",
   CurDate = "2020-09-09",
@@ -51,8 +60,7 @@ diff_variant_map_test() ->
   Ret = raaw_inventory:diff_variant_map(CurMap, PrevMap),
 
   ?assertEqual(
-    #{1 => {inventory_diff,1,4,3},
-      2 => {inventory_diff,2,2,1}},
+    #{1 => {inventory_diff, 1, 4, 3}, 2 => {inventory_diff, 2, 2, 3}},
     Ret
   ).
 
@@ -73,7 +81,7 @@ combine_variant_map_test() ->
   ?assertEqual(
     #{
       1 => #inventory{variant_id = 1, dt = "2020-09-08", quantity = 3},
-      2 => #inventory{variant_id = 2, dt = "2020-09-00", quantity = 1}
+      2 => #inventory{variant_id = 2, dt = "2020-09-00", quantity = 3}
     },
     Ret
   ).
@@ -89,7 +97,7 @@ default_missing_test() ->
   Ret = raaw_inventory:default_missing(Missing, Cur, #{}),
 
   ?assertEqual(
-    #{1 => {inventory, 1, raaw_inventory:prev_date(CurDate), -1}},
+    #{1 => {inventory, 1, raaw_inventory:prev_date(CurDate), 1}},
     Ret
   ).
 

@@ -49,7 +49,14 @@ html(BikeMod) ->
 
 tables(BikeMod) ->
   Reqs = [web:create_request(Url) || Url <- BikeMod:urls()],
-  string:join([table(Req) || Req <- Reqs, table(Req) =/= []], "<br>").
+
+  % not all JSON files frm the Urls may have been fetched, if a 404
+  % error occurred, etc... so filter for existing JSON files here
+  Filtered = [Req ||
+    Req <- Reqs,
+  filelib:is_regular(web_file:filename(Req, [{extension, "json"}])) =:= true],
+
+  string:join([table(Req) || Req <- Filtered, table(Req) =/= []], "<br>").
 
 table(Req = #request{}) ->
   Body = tbody(Req),
@@ -72,9 +79,12 @@ tbody(Req = #request{}) ->
   end.
 
 tds(Diffs) ->
+  ChangedDiffs = [X ||
+    X <- Diffs,
+    X#variant_inventory_diff.quantity /= X#variant_inventory_diff.prev_quantity],
+  ?LOG({changed_diffs, ChangedDiffs}),
   string:join(
-    [format("<tr>~s</tr>", [td(Diff)]) || Diff <- Diffs,
-      Diff#variant_inventory_diff.quantity /= Diff#variant_inventory_diff.prev_quantity], ""
+    [format("<tr>~s</tr>", [td(Diff)]) || Diff <- ChangedDiffs], ""
   ).
 
 td(Diff) ->

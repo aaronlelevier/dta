@@ -73,10 +73,11 @@ combine_variant_map(CurMap, PrevMap) ->
   Cur = sets:from_list(maps:keys(CurMap)),
   Prev = sets:from_list(maps:keys(PrevMap)),
   Union = sets:union(Cur, Prev),
-  Subtract = sets:subtract(Cur, Prev),
+  Missing = sets:subtract(Cur, Prev),
 
-  % for all non-present VariantIds, default Prev day inventory and zip (Subtract)
-  L = default_missing(sets:to_list(Subtract), CurMap, []),
+  % for all non-present VariantIds, default Prev
+  % day inventory and zip (Missing)
+  L = default_missing(sets:to_list(Missing), CurMap, []),
 
   % for those present in both, just zip (Union)
   L2 = present_in_both(Union, Cur, Prev),

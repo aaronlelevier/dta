@@ -91,6 +91,7 @@ product_map(Req = #request{}) ->
 -spec product_map(#request{}, list()) -> map().
 product_map(Req = #request{}, Opts) ->
   Ext = proplists:get_value(extension, Opts, "html"),
+  ?LOG({extension, Ext}),
   Bin = case Ext of
           "html" ->
             {ok, Bytes} = file_read(Req),

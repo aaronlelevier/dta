@@ -32,6 +32,7 @@ fetch_single_test() ->
   Url = raaw_url(),
   Req = web:create_request(Url, [{dt, dateutil:date_str(2020, 1, 1)}]),
   Filename = web_file:filename(Req, [{extension, "json"}]),
+  Status = {"HTTP/1.1", 200, "OK"},
   %% mock setup
   {ok, Bin} = web_file:file_read(raaw_req()),
   Expected = binary_to_list(Bin),
@@ -40,7 +41,7 @@ fetch_single_test() ->
     httpc,
     request,
     fun(_A, _B, _C, _D) ->
-      {ok, {status, headers, Expected}}
+      {ok, {Status, headers, Expected}}
     end)),
   %% no JSON file present
   ?assertEqual(ok, web_file:file_delete(Filename)),
@@ -62,12 +63,13 @@ fetch_page_test() ->
   Req = raaw_req(),
   {ok, Bin} = web_file:file_read(Req),
   Expected = binary_to_list(Bin),
+  Status = {"HTTP/1.1", 200, "OK"},
   % mock setup
   ok = meck:expect(
     httpc,
     request,
     fun(_A, _B, _C, _D) ->
-      {ok, {status, headers, Expected}}
+      {ok, {Status, headers, Expected}}
     end),
 
   {ok, Ret} = web:fetch_page(raaw_url()),

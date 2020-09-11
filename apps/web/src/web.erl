@@ -45,8 +45,12 @@ fetch_page(Url) ->
   % fetch page
   ?LOG({url, Url}),
   ReqHeaders = [{"User-Agent", "dta"}],
-  {ok, {_Status, _Headers, Body}} = httpc:request(get, {Url, ReqHeaders}, [], []),
-  {ok, Body}.
+  {ok, {Status, _Headers, Body}} = httpc:request(get, {Url, ReqHeaders}, [], []),
+  ?LOG({fetch_page, status, Status, Url}),
+  case Status of
+    {_, 200, _} -> {ok, Body};
+    {_Http, StatusCode, Msg}-> {error, {StatusCode, Msg}}
+  end.
 
 %%%===================================================================
 %%% Internal functions

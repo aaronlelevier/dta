@@ -21,3 +21,4 @@ html/
 *.dets
 apps/web/priv/
 table.html
+*.log

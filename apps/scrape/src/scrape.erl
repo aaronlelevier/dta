@@ -28,6 +28,7 @@ main(Args) ->
   application:load(?APP),
   application:load(getopt),
 
+  % parse args and set env params
   Ret = parse_args(Args),
   ?LOG(Ret),
 
@@ -36,8 +37,14 @@ main(Args) ->
   ok = inets:start(),
   ok = application:start(?APP),
 
-  [H|_] = Args,
-  BikeMod = list_to_atom(H),
+  % retrieve env param
+  ?LOG(application:get_all_env(?APP)),
+
+  {ok, BikeMod0} = application:get_env(?APP, bikemod),
+  ?LOG(BikeMod0),
+
+  % must be an atom per method contract below
+  BikeMod = list_to_atom(BikeMod0),
 
   ok = dta_reporter:send_work(BikeMod),
   ok = email:send_email(
@@ -52,13 +59,26 @@ main(Args) ->
 %%====================================================================
 
 parse_args(Args) ->
-  getopt:parse(opt_spec_list(), Args).
+  case getopt:parse(opt_spec_list(), Args) of
+    {ok, {ParsedArgs, _BadArgs}} ->
+      ?LOG(ParsedArgs),
+      set_args(ParsedArgs);
+    {error, {invalid_option, _}} ->
+      getopt:usage(opt_spec_list(), "DTA"),
+      erlang:halt(1)
+  end.
 
 -spec opt_spec_list() -> [getopt:option_spec()].
 opt_spec_list() ->
   [{ bikemod
     , $b
     , "bikemod"
-    , undefined
+    , {string, "raaw"}
     , "Name of BikeMod. Either 'chromag' or 'raaw'"
   }].
+
+set_args([]) -> ok;
+set_args([{Arg, Val} | Rest]) ->
+  ?LOG(Rest),
+  application:set_env(?APP, Arg, Val),
+  set_args(Rest).

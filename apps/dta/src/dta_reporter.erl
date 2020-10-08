@@ -30,7 +30,7 @@ start_link() ->
 %% @doc start all dta_worker's for the BikeMod and wait until complete
 -spec send_work(BikeMod) -> ok when
   BikeMod :: chromag | raaw.
-send_work(BikeMod) ->
+send_work(BikeMod) when is_atom(BikeMod) ->
   % tell the workers to do work
   gen_server:call(?SERVER, {send_work, BikeMod}),
   % wait for the workers to finish

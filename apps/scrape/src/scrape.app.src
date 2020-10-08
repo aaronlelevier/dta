@@ -11,6 +11,7 @@
         gen_smtp,
         jsx,
         mochiweb,
+        getopt,
         % my apps
         util,
         web,

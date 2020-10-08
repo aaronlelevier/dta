@@ -11,6 +11,8 @@
 -export([main/1]).
 -include_lib("dta/include/macros.hrl").
 
+-define(APP, dta).
+
 %%====================================================================
 %% API functions
 %%====================================================================
@@ -22,11 +24,20 @@ main(Args) ->
   io:format("Version: ~p~n", [init:script_id()]),
   io:format("Args: ~p~n", [Args]),
 
-  [H|_] = Args,
-  BikeMod = list_to_atom(H),
+  % start applications
+  application:load(?APP),
+  application:load(getopt),
+
+  Ret = parse_args(Args),
+  ?LOG(Ret),
 
   % start applications
-  ok = start(),
+  ok = ssl:start(),
+  ok = inets:start(),
+  ok = application:start(?APP),
+
+  [H|_] = Args,
+  BikeMod = list_to_atom(H),
 
   ok = dta_reporter:send_work(BikeMod),
   ok = email:send_email(
@@ -40,9 +51,14 @@ main(Args) ->
 %% Internal functions
 %%====================================================================
 
-%% start DETS
-start() ->
-  ok = ssl:start(),
-  ok = inets:start(),
-  ok = application:start(dta),
-  ok.
+parse_args(Args) ->
+  getopt:parse(opt_spec_list(), Args).
+
+-spec opt_spec_list() -> [getopt:option_spec()].
+opt_spec_list() ->
+  [{ bikemod
+    , $b
+    , "bikemod"
+    , undefined
+    , "Name of BikeMod. Either 'chromag' or 'raaw'"
+  }].
